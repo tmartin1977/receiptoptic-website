@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReceiptOptic - Offline-First Receipt Scanner & Expense Ledger</title>
+    <meta name="description" content="ReceiptOptic is an offline-first financial ledger. Scan receipts with local overrides and 100% accuracy, map business expenses to Schedule C tax categories, and track budgets with beautiful flat 2D charts.">
+    <meta name="keywords" content="receipt scanner, expense tracker, tax calculator, Schedule C, Gemini AI, SQLite ledger, business expenses">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Vanilla CSS Styling -->
+    <style>
+        :root {
+            --bg-base: #0B0F19;
+            --bg-surface: rgba(22, 27, 42, 0.65);
+            --bg-surface-opaque: #161B2A;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --primary: #3B82F6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --accent: #00F2FE;
+            --accent-glow: rgba(0, 242, 254, 0.3);
+            --card-border: #2A354F;
+            --success: #39FF14;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .nav-logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        /* Background Glows */
+        .glow-orb {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(150px);
+            z-index: -1;
+            opacity: 0.3;
+        }
+        .orb-1 {
+            top: -100px;
+            left: -100px;
+            background: var(--primary);
+        }
+        .orb-2 {
+            top: 200px;
+            right: -100px;
+            background: var(--accent);
+        }
+
+        /* Navigation Header */
+        header {
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(12px);
+            background-color: rgba(7, 9, 19, 0.8);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            font-size: 24px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-logo-icon {
+            font-size: 28px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            align-items: center;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        .nav-btn {
+            background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);
+            color: #070913 !important;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 160px 40px 100px 40px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+        }
+        .hero-info h1 {
+            font-size: 54px;
+            line-height: 1.15;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f3f4f6 30%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-info h1 span {
+            background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-info p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 35px;
+            max-width: 540px;
+        }
+        .hero-ctas {
+            display: flex;
+            gap: 20px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);
+            color: #070913;
+            padding: 14px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+        .btn-secondary {
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            padding: 14px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.05);
+            transform: translateY(-2px);
+        }
+        .hero-mockup-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-mockup-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            width: 100%;
+            max-width: 480px;
+            transition: transform 0.5s;
+        }
+        .hero-mockup-card:hover {
+            transform: scale(1.02) rotate(1deg);
+        }
+        .hero-mockup-img {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-header h2 {
+            font-size: 38px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 35px 30px;
+            transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(8px);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 242, 254, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.05);
+        }
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Interactive Simulator Section */
+        .simulator-section {
+            padding: 80px 40px;
+            background-color: rgba(22, 28, 45, 0.2);
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .simulator-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 50px;
+            align-items: center;
+        }
+        .sim-info h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .sim-info p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+        .sim-features-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+        .sim-features-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .sim-features-list li span.check {
+            color: var(--success);
+            font-weight: bold;
+        }
+        .sim-box {
+            background-color: var(--bg-surface-opaque);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Dropzone Styling */
+        .dropzone {
+            border: 2px dashed rgba(59, 130, 246, 0.4);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        .dropzone:hover {
+            border-color: var(--accent);
+            background-color: rgba(59, 130, 246, 0.03);
+        }
+        .dropzone-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .dropzone h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .dropzone p {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Scanning Progress Overlay */
+        .scan-progress {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .scanner-beam {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            box-shadow: 0 0 10px var(--accent);
+            animation: scanUpDown 2s infinite ease-in-out;
+            top: 0;
+        }
+        @keyframes scanUpDown {
+            0% { top: 5%; }
+            50% { top: 95%; }
+            100% { top: 5%; }
+        }
+        .progress-bar-container {
+            width: 80%;
+            height: 6px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+        .scan-model-badge {
+            background-color: rgba(59, 130, 246, 0.15);
+            border: 1px solid var(--primary);
+            color: var(--accent);
+            font-family: 'Outfit', sans-serif;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        /* Simulated Result View */
+        .sim-results {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .sim-result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+        .sim-result-header h4 {
+            font-size: 18px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .success-badge {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .sim-result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .sim-result-field {
+            font-size: 12px;
+        }
+        .sim-result-field label {
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 3px;
+        }
+        .sim-result-field span {
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .tax-tag {
+            color: var(--accent);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            background-color: rgba(0, 242, 254, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        .sim-items-list {
+            border-top: 1px dashed var(--card-border);
+            padding-top: 12px;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .sim-item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .sim-item-row span.deductible {
+            color: var(--success);
+            font-size: 10px;
+            margin-left: 5px;
+        }
+        .sim-reset-btn {
+            background-color: rgba(255,255,255,0.06);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            align-self: flex-end;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        .sim-reset-btn:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* Download Section */
+        .download-section {
+            padding: 100px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+        }
+        .download-box {
+            background: linear-gradient(135deg, rgba(22, 28, 45, 0.7) 0%, rgba(7, 9, 19, 0.7) 100%);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 60px 40px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+        .download-box h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        .download-box p {
+            color: var(--text-secondary);
+            font-size: 17px;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+        }
+        .download-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .download-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            width: 280px;
+            text-align: left;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .download-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.05);
+        }
+        .download-card h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .download-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .download-card .size-info {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--card-border);
+            padding: 50px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-left p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .footer-right {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .footer-right a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-right a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            header {
+                padding: 15px 20px;
+            }
+            .hero {
+                grid-template-columns: 1fr;
+                padding-top: 120px;
+                text-align: center;
+                gap: 40px;
+            }
+            .hero-info h1 {
+                font-size: 40px;
+            }
+            .hero-info p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-ctas {
+                justify-content: center;
+            }
+            .simulator-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        /* Showcase Section */
+        .showcase-section {
+            padding: 100px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .showcase-container {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .showcase-image-wrapper {
+            background: var(--bg-surface);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            transition: transform 0.5s ease;
+        }
+        .showcase-image-wrapper:hover {
+            transform: translateY(-5px);
+        }
+        .showcase-img {
+            width: 100%;
+            border-radius: 12px;
+            display: block;
+        }
+        .showcase-info h2 {
+            font-size: 38px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #9ca3af 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .showcase-info p {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .showcase-features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .showcase-feature h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-primary);
+        }
+        .showcase-feature p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Receipt Selector Chips */
+        .receipt-selector-title {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .receipt-chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .receipt-chip {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .receipt-chip:hover {
+            color: var(--text-primary);
+            border-color: rgba(0, 242, 254, 0.4);
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        .receipt-chip.active {
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            border-color: var(--accent);
+            color: var(--text-primary);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+        }
+
+        /* Simulator Receipt Preview Box */
+        .receipt-preview-card {
+            background: #ffffff;
+            color: #1f2937;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            margin-top: 15px;
+            border-top: 4px solid #3b82f6;
+            font-size: 12px;
+            line-height: 1.4;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            transition: opacity 0.3s;
+        }
+        .receipt-preview-header {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .receipt-preview-divider {
+            border-top: 1px dashed #9ca3af;
+            margin: 8px 0;
+        }
+        .receipt-preview-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Simulator Results Columns */
+        .sim-results-columns {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            align-items: center;
+        }
+        @media (max-width: 600px) {
+            .sim-results-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        .sim-results-left {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sim-results-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .chart-container-sim {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+        .donut-svg-sim {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .donut-center-sim {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+        }
+        .donut-center-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .donut-center-lbl {
+            font-size: 9px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+        .chart-legend-sim {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            font-size: 11px;
+        }
+        .legend-item-sim {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .legend-color-sim {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .legend-label-sim {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+        }
+        .legend-val-sim {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .sim-bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--card-border);
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        .offline-badge {
+            font-size: 11px;
+            color: var(--success);
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        @media (max-width: 900px) {
+            .showcase-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+
+    <!-- Glow Orbs -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- Navigation Header -->
+    <header>
+        <div class="nav-logo" id="navLogo">
+            <img src="logo.png" alt="Logo" class="nav-logo-img" style="height: 32px; width: 32px; border-radius: 8px; object-fit: cover;"> ReceiptOptic
+        </div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#showcase">Dashboard</a></li>
+            <li><a href="#demo">Interactive Demo</a></li>
+            <li><a href="#download" class="nav-btn" id="btnNavDownload">Download</a></li>
+        </ul>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-info">
+            <h1>Turn paper clutter into <span>smart tax savings</span></h1>
+            <p>ReceiptOptic is an offline-first financial ledger. Parse receipts with 100% offline signature overrides, map items to Schedule C tax categories, and visualize spending with thick flat 2D charts.</p>
+            <div class="hero-ctas">
+                <a href="#download" class="btn-primary" id="btnHeroDownloadPC">
+                    <span>💻</span> Download for PC
+                </a>
+                <a href="#demo" class="btn-secondary" id="btnHeroDemo">
+                    <span>⚡</span> Try Interactive Demo
+                </a>
+            </div>
+        </div>
+        <div class="hero-mockup-wrapper">
+            <div class="hero-mockup-card">
+                <img src="hero_mockup.png" alt="ReceiptOptic Application Dashboard Mockup" class="hero-mockup-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <h2>Packed with Smart Utilities</h2>
+            <p>ReceiptOptic runs locally on your PC and mobile devices, bringing lightning-fast analytics to your personal and business finance ledger.</p>
+        </div>
+        <div class="features-grid">
+            <!-- Card 1: 100% Offline Accuracy -->
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>100% Offline Accuracy</h3>
+                <p>Features zero-config instant parsing via local overrides. Receipt signature matching secures 100% accuracy for standard vendors, working completely without network connection.</p>
+            </div>
+            <!-- Card 2: Schedule C -->
+            <div class="feature-card">
+                <div class="feature-icon">⚖️</div>
+                <h3>IRS Schedule C Mappings</h3>
+                <p>Automatically map business expenses to Schedule C tax lines. View YTD tax summaries directly inside your dashboard and export audit-ready receipt archives with one click.</p>
+            </div>
+            <!-- Card 3: Thick Flat 2D Charts -->
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Thick Flat 2D Donut Charts</h3>
+                <p>Track your YTD spending with our upgraded circular visualization. Features 150% thicker arcs, rounded segment caps, and clear side-aligned legend indicators.</p>
+            </div>
+            <!-- Card 4: Personal Info Manager -->
+            <div class="feature-card">
+                <div class="feature-icon">👤</div>
+                <h3>Personal Profile Settings</h3>
+                <p>Customize tax profiles with your name, SSN/EIN, business name, custom logo, and business type for personalized, ready-to-file expense exports.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Showcase Section -->
+    <section class="showcase-section" id="showcase">
+        <div class="showcase-container">
+            <div class="showcase-image-wrapper">
+                <img src="dashboard_actual.png" alt="ReceiptOptic PC App Spending Dashboard Mockup" class="showcase-img">
+            </div>
+            <div class="showcase-info">
+                <h2>A Unified Financial Command Center</h2>
+                <p>ReceiptOptic gives you a command center for budget tracking. Manage personal info profile settings, YTD tax summaries, and budget goals inside a modern, private workspace.</p>
+                <div class="showcase-features">
+                    <div class="showcase-feature">
+                        <h4>🎨 Flat 2D Chart Visualizations</h4>
+                        <p>Beautiful thick circular ring segments with rounded caps for spending allocation charts.</p>
+                    </div>
+                    <div class="showcase-feature">
+                        <h4>💼 IRS-Ready Records</h4>
+                        <p>Export database backups and ZIP ledger archives directly to your local storage or flash drives.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Simulator Section -->
+    <section class="simulator-section" id="demo">
+        <div class="simulator-container">
+            <div class="sim-info">
+                <h2>Experience the Local Scanner</h2>
+                <p>ReceiptOptic recognizes standard receipts instantly using signature override indices, bypassing API keys and networks entirely.</p>
+                <p>Select one of the mock receipts below to load it into the simulator, then click <strong>Scan Loaded Receipt</strong> to execute.</p>
+                
+                <div class="receipt-selector-title">Select a Receipt:</div>
+                <div class="receipt-chips" id="receiptChips">
+                    <button class="receipt-chip active" onclick="selectReceipt('wawa')">⛽ Wawa ($36.00)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('walmart')">🛒 Walmart ($140.27)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('costco')">📦 Costco ($378.98)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('mens_wearhouse')">👔 Men's Wearhouse ($368.54)</button>
+                </div>
+
+                <div class="receipt-preview-card" id="receiptPreview">
+                    <div class="receipt-preview-header">Wawa Store #5422</div>
+                    <div class="receipt-preview-divider"></div>
+                    <div class="receipt-preview-row"><span>UNLEADED REGULAR</span><span>$30.00</span></div>
+                    <div class="receipt-preview-row"><span>PREMIUM COFFEE & MUFFIN</span><span>$6.00</span></div>
+                    <div class="receipt-preview-divider"></div>
+                    <div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$36.00</strong></span></div>
+                </div>
+            </div>
+            
+            <div class="sim-box" id="simBox">
+                <!-- Dropzone Area -->
+                <div class="dropzone" id="dropzone" onclick="triggerSimulation()">
+                    <span class="dropzone-icon">📥</span>
+                    <h4>Scan Loaded Receipt</h4>
+                    <p>Click here to scan selected receipt</p>
+                </div>
+                
+                <!-- Scanning Progress Area -->
+                <div class="scan-progress" id="scanProgress">
+                    <div class="scanner-beam"></div>
+                    <span style="font-size: 32px; margin-bottom: 10px;">🔒</span>
+                    <h4 id="progressStatus">Calculating file signature...</h4>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <span class="scan-model-badge">Local Offline Override Engine</span>
+                </div>
+ 
+                <!-- Simulation Results Area -->
+                <div class="sim-results" id="simResults">
+                    <div class="sim-result-header">
+                        <h4>Scan Successful</h4>
+                        <span class="success-badge" id="resStatusBadge">MATCH (Override)</span>
+                    </div>
+                    
+                    <div class="sim-results-columns">
+                        <!-- Left Column: Receipt Data & Items -->
+                        <div class="sim-results-left">
+                            <div class="sim-result-grid">
+                                <div class="sim-result-field">
+                                    <label>Vendor</label>
+                                    <span id="resVendor">Wawa</span>
+                                </div>
+                                <div class="sim-result-field">
+                                    <label>Date</label>
+                                    <span id="resDate">2026-06-10</span>
+                                </div>
+                                <div class="sim-result-field">
+                                    <label>Total Amount</label>
+                                    <span id="resTotal" style="color: var(--accent); font-size: 16px; font-weight: 700;">$36.00</span>
+                                </div>
+                                <div class="sim-result-field">
+                                    <label>Method</label>
+                                    <span id="resMethod">Credit Card</span>
+                                </div>
+                            </div>
+                            
+                            <div class="sim-items-list" id="simItemsList">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Flat 2D Chart -->
+                        <div class="sim-results-right">
+                            <div class="chart-container-sim">
+                                <svg class="donut-svg-sim" viewBox="0 0 100 100" id="donutSvgSim">
+                                    <!-- Populated dynamically via JS -->
+                                </svg>
+                                <div class="donut-center-sim" id="donutCenterText">
+                                    <div class="donut-center-val" id="donutTotalVal">$36.00</div>
+                                    <div class="donut-center-lbl">Total</div>
+                                </div>
+                            </div>
+                            <div class="chart-legend-sim" id="chartLegendSim">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sim-bottom-row">
+                        <span class="offline-badge">🔒 Local Override Executed (No API Request)</span>
+                        <button class="sim-reset-btn" id="btnSimReset" onclick="resetSimulation()">Scan Another Receipt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Download Section -->
+    <section class="download-section" id="download">
+        <div class="download-box">
+            <h2>Get Started with ReceiptOptic</h2>
+            <p>Download the fully compiled distribution package for your PC, or get the companion mobile app for scanning on the go.</p>
+            <div class="download-grid">
+                <!-- PC Card -->
+                <div class="download-card">
+                    <h3>💻 Windows PC</h3>
+                    <p>Complete desktop application with dark dashboard, CSV tax exports, and database preservation.</p>
+                    <a href="../ReceiptOpticClean.zip" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadPCZip" download>
+                        Download Zip
+                    </a>
+                    <span class="size-info">Size: ~110MB | v2.1.0</span>
+                </div>
+                <!-- Mobile Card -->
+                <div class="download-card">
+                    <h3>📱 Android Mobile</h3>
+                    <p>Mobile APK for cameras. Sync databases via backup exports from your local flash drive.</p>
+                    <a href="../ReceiptOpticMobile.apk" class="btn-secondary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadMobileApk" download>
+                        Download APK
+                    </a>
+                    <span class="size-info">Size: ~12MB | v2.1.0</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-left">
+            <p>&copy; 2026 ReceiptOptic. Open-source under MIT License.</p>
+        </div>
+        <div class="footer-right">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Github Repository</a>
+            <a href="#">Documentation</a>
+        </div>
+    </footer>
+
+    <!-- Interactive Javascript Logic -->
+    <script>
+        const RECEIPTS_MOCK = {
+            wawa: {
+                vendor: "Wawa",
+                date: "2026-06-18",
+                total: 36.00,
+                tax_amount: 0.00,
+                payment_method: "Credit Card",
+                rawText: '<div class="receipt-preview-header">Wawa Store #5422</div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span>UNLEADED REGULAR</span><span>$30.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>PREMIUM COFFEE & MUFFIN</span><span>$6.00</span></div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$36.00</strong></span></div>',
+                items: [
+                    { name: "Unleaded Fuel (10.144 Gal)", price: 30.00, category: "Other", is_tax_deductible: true },
+                    { name: "Premium Coffee & Muffin", price: 6.00, category: "Other", is_tax_deductible: false }
+                ],
+                chartData: [
+                    { label: "Other", amount: 36.00, color: "#A020F0" }
+                ]
+            },
+            walmart: {
+                vendor: "Walmart",
+                date: "2026-06-14",
+                total: 140.27,
+                tax_amount: 5.33,
+                payment_method: "Debit Card (Visa)",
+                rawText: '<div class="receipt-preview-header">WALMART SUPERCENTER</div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span>SNC REGISTERED 3100 BLK</span><span>$39.96</span></div>' +
+                          '<div class="receipt-preview-row"><span>TIME AND TRU SLUB TEE</span><span>$7.98</span></div>' +
+                          '<div class="receipt-preview-row"><span>GAIN LAUNDRY DETERGENT</span><span>$12.97</span></div>' +
+                          '<div class="receipt-preview-row"><span>GAIN FLINGS LAUNDRY PODS</span><span>$21.94</span></div>' +
+                          '<div class="receipt-preview-row"><span>HONEYCRISP APPLES & GROC</span><span>$52.09</span></div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$134.94</span></div>' +
+                          '<div class="receipt-preview-row"><span>TAX</span><span>$5.33</span></div>' +
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$140.27</strong></span></div>',
+                items: [
+                    { name: "SNC Registered 3100 Black", price: 39.96, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Time and Tru Slub Tee", price: 7.98, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Gain Laundry Detergent Liquid", price: 12.97, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Gain Flings Laundry Pods", price: 21.94, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Honeycrisp Apples & Groceries", price: 52.09, category: "Groceries", is_tax_deductible: false }
+                ],
+                chartData: [
+                    { label: "Groceries", amount: 52.09, color: "#00F2FE" },
+                    { label: "Clothing & Apparel", amount: 47.94, color: "#FF007F" },
+                    { label: "Household & Clean", amount: 34.91, color: "#39FF14" },
+                    { label: "Other (Tax)", amount: 5.33, color: "#A020F0" }
+                ]
+            },
+            costco: {
+                vendor: "Costco Wholesale",
+                date: "2026-06-14",
+                total: 378.98,
+                tax_amount: 9.78,
+                payment_method: "Visa",
+                rawText: '<div class="receipt-preview-header">COSTCO WHOLESALE #221</div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span>NUDGED BEACH TOWEL</span><span>$22.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>ALMOND CRACKERS & SNACKS</span><span>$45.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>KIRKLAND FACIAL TISSUE</span><span>$15.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>KIRKLAND GOLF BALLS</span><span>$29.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>BULK MEAT & PRODUCE</span><span>$200.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>OTHER HOUSEHOLD ITEMS</span><span>$55.23</span></div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$369.20</span></div>' +
+                          '<div class="receipt-preview-row"><span>TAX (5.5%)</span><span>$9.78</span></div>' +
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$378.98</strong></span></div>',
+                items: [
+                    { name: "Nudged Beach Towel", price: 22.99, category: "Household & Cleaning", is_tax_deductible: true },
+                    { name: "Almond Crackers & Snacks", price: 45.00, category: "Groceries", is_tax_deductible: false },
+                    { name: "Kirkland Facial Tissue", price: 15.99, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Kirkland Signature Golf Balls", price: 29.99, category: "Other", is_tax_deductible: false },
+                    { name: "Bulk Meat & Produce", price: 200.00, category: "Groceries", is_tax_deductible: false },
+                    { name: "Other Household Items", price: 55.23, category: "Household & Cleaning", is_tax_deductible: false }
+                ],
+                chartData: [
+                    { label: "Groceries", amount: 245.00, color: "#00F2FE" },
+                    { label: "Household & Clean", amount: 94.22, color: "#39FF14" },
+                    { label: "Other", amount: 39.76, color: "#A020F0" }
+                ]
+            },
+            mens_wearhouse: {
+                vendor: "Mens Wearhouse",
+                date: "2026-06-11",
+                total: 368.54,
+                tax_amount: 18.55,
+                payment_method: "Cash",
+                rawText: '<div class="receipt-preview-header">Mens Wearhouse #891</div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span>CLASSIC NOTCH CUT JACKET</span><span>$349.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>STORE TO STORE SHIPPING</span><span>$0.00</span></div>' +
+                          '<div class="receipt-preview-divider"></div>' +
+                          '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$349.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>TAX (5.3%)</span><span>$18.55</span></div>' +
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$368.54</strong></span></div>',
+                items: [
+                    { name: "Classic Notch Cut Jacket", price: 349.99, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Store to Store Shipping", price: 0.00, category: "Other", is_tax_deductible: false }
+                ],
+                chartData: [
+                    { label: "Clothing & Apparel", amount: 349.99, color: "#FF007F" },
+                    { label: "Other", amount: 18.55, color: "#A020F0" }
+                ]
+            }
+        };
+        
+        let selectedReceiptId = 'wawa';
+
+        function selectReceipt(id) {
+            selectedReceiptId = id;
+            
+            // Update active chip UI
+            const chips = document.querySelectorAll('.receipt-chip');
+            chips.forEach(chip => chip.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Reset simulation views
+            resetSimulation();
+
+            // Update preview card
+            const receipt = RECEIPTS_MOCK[id];
+            document.getElementById('receiptPreview').innerHTML = receipt.rawText;
+        }
+
+        function triggerSimulation() {
+            const dropzone = document.getElementById('dropzone');
+            const scanProgress = document.getElementById('scanProgress');
+            const simResults = document.getElementById('simResults');
+            const progressBar = document.getElementById('progressBar');
+            const progressStatus = document.getElementById('progressStatus');
+
+            dropzone.style.display = 'none';
+            scanProgress.style.display = 'flex';
+            simResults.style.display = 'none';
+
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    showResults();
+                } else {
+                    width += 4;
+                    progressBar.style.width = width + '%';
+                    if (width < 25) {
+                        progressStatus.innerText = 'Calculating image file signature...';
+                    } else if (width < 50) {
+                        progressStatus.innerText = 'Searching local override index...';
+                    } else if (width < 75) {
+                        progressStatus.innerText = 'Validated MD5 signature: 200 OK...';
+                    } else {
+                        progressStatus.innerText = 'Mapping items and drawing spending chart...';
+                    }
+                }
+            }, 80);
+        }
+
+        function showResults() {
+            const scanProgress = document.getElementById('scanProgress');
+            const simResults = document.getElementById('simResults');
+            
+            scanProgress.style.display = 'none';
+            simResults.style.display = 'block';
+
+            // Populate data based on selection
+            const receipt = RECEIPTS_MOCK[selectedReceiptId];
+            document.getElementById('resVendor').innerText = receipt.vendor;
+            document.getElementById('resDate').innerText = receipt.date;
+            document.getElementById('resTotal').innerText = '$' + receipt.total.toFixed(2);
+            document.getElementById('resMethod').innerText = receipt.payment_method;
+
+            // Populate items list
+            const itemsList = document.getElementById('simItemsList');
+            itemsList.innerHTML = '';
+            receipt.items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'sim-item-row';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.innerText = item.name;
+                if (item.is_tax_deductible) {
+                    const dedBadge = document.createElement('span');
+                    dedBadge.className = 'deductible';
+                    dedBadge.innerText = ' [Tax Deductible]';
+                    nameSpan.appendChild(dedBadge);
+                }
+
+                const priceSpan = document.createElement('span');
+                priceSpan.innerText = '$' + item.price.toFixed(2);
+                
+                row.appendChild(nameSpan);
+                row.appendChild(priceSpan);
+                itemsList.appendChild(row);
+            });
+
+            // Draw spending donut chart & legend
+            renderDonutChart(receipt);
+        }
+
+        function renderDonutChart(receipt) {
+            const svg = document.getElementById('donutSvgSim');
+            const legend = document.getElementById('chartLegendSim');
+            const totalVal = document.getElementById('donutTotalVal');
+            
+            svg.innerHTML = '';
+            legend.innerHTML = '';
+            totalVal.innerText = '$' + receipt.total.toFixed(2);
+
+            const r = 30;
+            const cx = 50;
+            const cy = 50;
+            const circumference = 2 * Math.PI * r; // ~188.50
+            const strokeWidth = 16;
+
+            // If the total net charge is $0.00 (Promo Redemption wash case)
+            if (receipt.total === 0) {
+                // Draw a full purple ring representing redemption wash
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', cx);
+                circle.setAttribute('cy', cy);
+                circle.setAttribute('r', r);
+                circle.setAttribute('stroke', '#A020F0');
+                circle.setAttribute('stroke-width', strokeWidth);
+                circle.setAttribute('fill', 'transparent');
+                circle.setAttribute('stroke-linecap', 'round');
+                svg.appendChild(circle);
+
+                // Add legend entry
+                legend.innerHTML = '<div class="legend-item-sim">' +
+                                   '<span class="legend-label-sim"><span class="legend-color-sim" style="background-color: #A020F0;"></span>Promo Redemption</span>' +
+                                   '<span class="legend-val-sim">$0.00</span>' +
+                                   '</div>';
+                return;
+            }
+
+            // Calculate total values in chartData
+            const dataTotal = receipt.chartData.reduce((sum, item) => sum + item.amount, 0);
+
+            // Determine visual gaps dynamically to prevent overlaps on small slices
+            let gap = 4;
+            while (gap > 0) {
+                let ok = true;
+                for (let slice of receipt.chartData) {
+                    let P = slice.amount / dataTotal;
+                    let dash = P * circumference - gap - strokeWidth;
+                    if (dash < 2) {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (ok) break;
+                gap -= 0.5;
+            }
+            if (gap < 0) gap = 0;
+            
+            let accumulatedOffset = 0;
+
+            receipt.chartData.forEach(slice => {
+                const percentage = slice.amount / dataTotal;
+                const arcLength = percentage * circumference;
+                
+                let dash = arcLength - gap - strokeWidth;
+                if (dash < 0) dash = 0;
+                
+                const strokeSpace = circumference - dash;
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', cx);
+                circle.setAttribute('cy', cy);
+                circle.setAttribute('r', r);
+                circle.setAttribute('stroke', slice.color);
+                circle.setAttribute('stroke-width', strokeWidth);
+                circle.setAttribute('fill', 'transparent');
+                circle.setAttribute('stroke-dasharray', `${dash} ${strokeSpace}`);
+                
+                // Centered segment offset calculation
+                const offset = accumulatedOffset + gap / 2 + strokeWidth / 2;
+                circle.setAttribute('stroke-dashoffset', -offset);
+                circle.setAttribute('stroke-linecap', 'round');
+                
+                circle.style.transition = 'stroke-width 0.3s ease';
+                circle.addEventListener('mouseenter', () => circle.setAttribute('stroke-width', strokeWidth + 2));
+                circle.addEventListener('mouseleave', () => circle.setAttribute('stroke-width', strokeWidth));
+
+                svg.appendChild(circle);
+
+                accumulatedOffset += arcLength;
+
+                // Add to legend
+                const legendItem = document.createElement('div');
+                legendItem.className = 'legend-item-sim';
+                
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'legend-label-sim';
+                
+                const colorDot = document.createElement('span');
+                colorDot.className = 'legend-color-sim';
+                colorDot.style.backgroundColor = slice.color;
+                
+                labelSpan.appendChild(colorDot);
+                labelSpan.appendChild(document.createTextNode(slice.label));
+                
+                const valSpan = document.createElement('span');
+                valSpan.className = 'legend-val-sim';
+                valSpan.innerText = '$' + slice.amount.toFixed(2);
+                
+                legendItem.appendChild(labelSpan);
+                legendItem.appendChild(valSpan);
+                legend.appendChild(legendItem);
+            });
+        }
+
+        function resetSimulation() {
+            const dropzone = document.getElementById('dropzone');
+            const scanProgress = document.getElementById('scanProgress');
+            const simResults = document.getElementById('simResults');
+            const progressBar = document.getElementById('progressBar');
+
+            dropzone.style.display = 'block';
+            scanProgress.style.display = 'none';
+            simResults.style.display = 'none';
+            progressBar.style.width = '0%';
+        }
+    </script>
+</body>
+</html>
