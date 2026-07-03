@@ -924,6 +924,91 @@
                 gap: 40px;
                 text-align: center;
             }
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        .modal-card {
+            background: rgba(22, 27, 42, 0.95);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 35px;
+            max-width: 480px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0, 242, 254, 0.15);
+            text-align: left;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+        .modal-card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .step-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .step-number {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--neon-cyan);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-content h4 {
+            font-size: 14px;
+            margin-bottom: 3px;
+            color: var(--text-primary);
+        }
+        .step-content p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 0;
         }
     </style>
     <link rel="icon" type="image/png" href="logo.png">
@@ -1192,7 +1277,7 @@
                         <div class="download-card">
                             <h3>💻 Windows PC</h3>
                             <p>Complete desktop application with dark dashboard, CSV tax exports, and database preservation.</p>
-                            <a href="../ReceiptOpticClean.zip" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadPCZip" download>
+                            <a href="../ReceiptOpticClean.zip" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadPCZip" download onclick="showDownloadModal()">
                                 Download Zip
                             </a>
                             <span class="size-info">Size: ~110MB | v2.1.0</span>
@@ -1677,6 +1762,57 @@
 
         // Initialize session check
         checkSession();
+
+        function showDownloadModal() {
+            document.getElementById('download-modal').style.display = 'flex';
+        }
+        function closeDownloadModal() {
+            document.getElementById('download-modal').style.display = 'none';
+        }
     </script>
+
+    <!-- Download Instructions Modal -->
+    <div id="download-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeDownloadModal()">×</button>
+            <h3>How to Install ReceiptOptic</h3>
+            <p style="margin-bottom: 20px; color: var(--text-secondary); font-size: 13px;">Follow these simple steps to set up the desktop client on your Windows PC:</p>
+            
+            <div class="step-list">
+                <div class="step-item">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <h4>Download the ZIP</h4>
+                        <p>Wait for the download to complete saving `ReceiptOpticClean.zip` to your computer.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <h4>Extract the Files</h4>
+                        <p>Right-click the ZIP file and select <strong>"Extract All..."</strong>. Do not run it from inside the compressed folder.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">3</span>
+                    <div class="step-content">
+                        <h4>Launch the App</h4>
+                        <p>Open the extracted folder and double-click <strong>"ReceiptOptic.exe"</strong> to start.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-number">4</span>
+                    <div class="step-content">
+                        <h4>Security Notice</h4>
+                        <p>If Windows SmartScreen shows a warning, click <strong>"More info"</strong> and then select <strong>"Run anyway"</strong> to run the app.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-primary" style="width: 100%; margin-top: 25px; padding: 12px; font-weight: 600; cursor: pointer; color: #0b0f19;" onclick="closeDownloadModal()">
+                Got it, thanks!
+            </button>
+        </div>
+    </div>
 </body>
 </html>
