@@ -1011,7 +1011,7 @@
             margin: 0;
         }
     </style>
-    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/webp" href="logo.webp">
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2012164450389148"
          crossorigin="anonymous"></script>
@@ -1025,7 +1025,7 @@
     <!-- Navigation Header -->
     <header>
         <div class="nav-logo" id="navLogo">
-            <img src="logo.png" alt="Logo" class="nav-logo-img" style="height: 32px; width: 32px; border-radius: 8px; object-fit: cover;"> ReceiptOptic
+            <img src="logo.webp" alt="Logo" class="nav-logo-img" style="height: 32px; width: 32px; border-radius: 8px; object-fit: cover;"> ReceiptOptic
         </div>
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
@@ -1052,7 +1052,7 @@
         </div>
         <div class="hero-mockup-wrapper">
             <div class="hero-mockup-card">
-                <img src="hero_mockup.png" alt="ReceiptOptic Application Dashboard Mockup" class="hero-mockup-img">
+                <img src="hero_mockup.webp" alt="ReceiptOptic Application Dashboard Mockup" class="hero-mockup-img">
             </div>
         </div>
     </section>
@@ -1107,7 +1107,7 @@
     <section class="showcase-section" id="showcase">
         <div class="showcase-container">
             <div class="showcase-image-wrapper">
-                <img src="dashboard_actual.png" alt="ReceiptOptic PC App Spending Dashboard Mockup" class="showcase-img">
+                <img src="dashboard_actual.webp" alt="ReceiptOptic PC App Spending Dashboard Mockup" class="showcase-img">
             </div>
             <div class="showcase-info">
                 <h2>A Unified Financial Command Center</h2>
@@ -1814,5 +1814,14 @@
             </button>
         </div>
     </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((reg) => console.log('Service worker registered.', reg))
+                    .catch((err) => console.log('Service worker registration failed.', err));
+            });
+        }
+    </script>
 </body>
 </html>
