@@ -26,6 +26,71 @@
             --accent-glow: rgba(0, 242, 254, 0.3);
             --card-border: #2A354F;
             --success: #39FF14;
+            --neon-cyan: #00F2FE;
+            --neon-purple: #a020f0;
+        }
+
+        /* Auth Gate Styling */
+        .auth-card {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(22, 27, 42, 0.65);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: left;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(10px);
+        }
+        .auth-toggle {
+            display: flex;
+            border-bottom: 1px solid var(--card-border);
+            margin-bottom: 20px;
+        }
+        .auth-toggle button {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .auth-toggle button.active {
+            color: var(--neon-cyan);
+            border-bottom: 2px solid var(--neon-cyan);
+        }
+        .auth-inputs input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            background: rgba(11, 15, 25, 0.8);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            box-sizing: border-box;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .auth-inputs input:focus {
+            border-color: var(--neon-cyan);
+        }
+        .auth-message {
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+            font-weight: 500;
+        }
+        .auth-message.error {
+            color: #ff4d4d;
+        }
+        .auth-message.success {
+            color: #2ecc71;
         }
 
         * {
@@ -1072,16 +1137,54 @@
     <section class="download-section" id="download">
         <div class="download-box">
             <h2>Get Started with ReceiptOptic</h2>
-            <p>Download the fully compiled distribution package for your Windows PC.</p>
-            <div class="download-grid">
-                <!-- PC Card -->
-                <div class="download-card">
-                    <h3>💻 Windows PC</h3>
-                    <p>Complete desktop application with dark dashboard, CSV tax exports, and database preservation.</p>
-                    <a href="../ReceiptOpticClean.zip" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadPCZip" download>
-                        Download Zip
-                    </a>
-                    <span class="size-info">Size: ~110MB | v2.1.0</span>
+            
+            <!-- Auth Gated Content -->
+            <div id="auth-gate-container" style="margin-top: 25px;">
+                <!-- If Not Logged In, Show Form -->
+                <div id="auth-form-card" class="auth-card">
+                    <p style="margin-bottom: 25px; color: var(--text-secondary); text-align: center; font-size: 14px;">Create an account or sign in to download the Windows PC package.</p>
+                    
+                    <div class="auth-toggle">
+                        <button id="toggle-signin-btn" class="active" onclick="setAuthMode('signin')">Sign In</button>
+                        <button id="toggle-signup-btn" onclick="setAuthMode('signup')">Sign Up</button>
+                    </div>
+                    
+                    <div class="auth-inputs">
+                        <input type="email" id="auth-email" placeholder="Email Address" required>
+                        <input type="password" id="auth-password" placeholder="Password" required>
+                        <div id="signup-extra-inputs" style="display: none;">
+                            <input type="password" id="auth-confirm-password" placeholder="Confirm Password">
+                        </div>
+                    </div>
+                    
+                    <div id="auth-error-msg" class="auth-message error"></div>
+                    <div id="auth-success-msg" class="auth-message success"></div>
+                    
+                    <button id="auth-submit-btn" class="btn-primary" style="width: 100%; margin-top: 15px; padding: 12px; font-weight: 600; cursor: pointer;" onclick="handleAuthSubmit()">
+                        Sign In
+                    </button>
+                    
+                    <div class="auth-footer-links" style="margin-top: 20px; font-size: 12px; text-align: center;">
+                        <a href="javascript:void(0)" onclick="handleForgotPassword()" style="color: var(--neon-purple); text-decoration: none; font-weight: 500;">Forgot/Change Password?</a>
+                    </div>
+                </div>
+                
+                <!-- If Logged In, Show Download Card -->
+                <div id="auth-download-content" style="display: none;">
+                    <p style="margin-bottom: 10px; color: var(--text-secondary);">You are logged in as <strong id="logged-in-user-email"></strong>.</p>
+                    <a href="javascript:void(0)" onclick="handleLogout()" style="color: #ff007f; font-size: 13px; text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 25px;">Logout</a>
+                    
+                    <div class="download-grid">
+                        <!-- PC Card -->
+                        <div class="download-card">
+                            <h3>💻 Windows PC</h3>
+                            <p>Complete desktop application with dark dashboard, CSV tax exports, and database preservation.</p>
+                            <a href="../ReceiptOpticClean.zip" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadPCZip" download>
+                                Download Zip
+                            </a>
+                            <span class="size-info">Size: ~110MB | v2.1.0</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1403,6 +1506,153 @@
             simResults.style.display = 'none';
             progressBar.style.width = '0%';
         }
+    </script>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = "https://lwxnuxwoskockzovmevb.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3eG51eHdvc2tvY2t6b3ZtZXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNDAzNDAsImV4cCI6MjA5NzYxNjM0MH0.5DqftWk7KKjjRn7nOa1bWDdbYTp3eQP8SUXM80hoOHU";
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentSession = null;
+        let authMode = 'signin';
+
+        // Check active session on load
+        async function checkSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (session) {
+                currentSession = session;
+                showDownloads(session.user.email);
+            } else {
+                showAuthForm();
+            }
+        }
+
+        // Listen to auth changes
+        supabase.auth.onAuthStateChange((event, session) => {
+            if (session) {
+                currentSession = session;
+                showDownloads(session.user.email);
+            } else {
+                currentSession = null;
+                showAuthForm();
+            }
+        });
+
+        function showDownloads(email) {
+            document.getElementById('auth-form-card').style.display = 'none';
+            document.getElementById('auth-download-content').style.display = 'block';
+            document.getElementById('logged-in-user-email').innerText = email;
+        }
+
+        function showAuthForm() {
+            document.getElementById('auth-form-card').style.display = 'block';
+            document.getElementById('auth-download-content').style.display = 'none';
+        }
+
+        function setAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('auth-error-msg').style.display = 'none';
+            document.getElementById('auth-success-msg').style.display = 'none';
+            if (mode === 'signin') {
+                document.getElementById('toggle-signin-btn').className = 'active';
+                document.getElementById('toggle-signup-btn').className = '';
+                document.getElementById('signup-extra-inputs').style.display = 'none';
+                document.getElementById('auth-submit-btn').innerText = 'Sign In';
+            } else {
+                document.getElementById('toggle-signin-btn').className = '';
+                document.getElementById('toggle-signup-btn').className = 'active';
+                document.getElementById('signup-extra-inputs').style.display = 'block';
+                document.getElementById('auth-submit-btn').innerText = 'Sign Up';
+            }
+        }
+
+        async function handleAuthSubmit() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const errorMsg = document.getElementById('auth-error-msg');
+            const successMsg = document.getElementById('auth-success-msg');
+            
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            
+            if (!email || !password) {
+                errorMsg.innerText = "Please enter email and password.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('auth-submit-btn').disabled = true;
+            
+            if (authMode === 'signin') {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                if (error) {
+                    errorMsg.innerText = error.message;
+                    errorMsg.style.display = 'block';
+                } else {
+                    successMsg.innerText = "Success! Access granted.";
+                    successMsg.style.display = 'block';
+                }
+            } else {
+                const confirmPassword = document.getElementById('auth-confirm-password').value;
+                if (password !== confirmPassword) {
+                    errorMsg.innerText = "Passwords do not match.";
+                    errorMsg.style.display = 'block';
+                    document.getElementById('auth-submit-btn').disabled = false;
+                    return;
+                }
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+                if (error) {
+                    errorMsg.innerText = error.message;
+                    errorMsg.style.display = 'block';
+                } else {
+                    successMsg.innerText = "Signup successful! Check your email for confirmation or login.";
+                    successMsg.style.display = 'block';
+                }
+            }
+            document.getElementById('auth-submit-btn').disabled = false;
+        }
+
+        async function handleLogout() {
+            await supabase.auth.signOut();
+        }
+
+        async function handleForgotPassword() {
+            const email = document.getElementById('auth-email').value.trim();
+            const errorMsg = document.getElementById('auth-error-msg');
+            const successMsg = document.getElementById('auth-success-msg');
+            
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            
+            if (!email) {
+                errorMsg.innerText = "Please enter your email address to reset password.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: 'https://receiptoptic.com/reset-password.html'
+            });
+            
+            if (error) {
+                errorMsg.innerText = error.message;
+                errorMsg.style.display = 'block';
+            } else {
+                successMsg.innerText = "Password reset email sent! Check your inbox.";
+                successMsg.style.display = 'block';
+            }
+        }
+
+        // Initialize session check
+        checkSession();
     </script>
 </body>
 </html>
