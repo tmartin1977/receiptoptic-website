@@ -1010,6 +1010,111 @@
             color: var(--text-secondary);
             margin: 0;
         }
+        /* Disclaimer Bar */
+        .disclaimer-bar {
+            background: rgba(220, 38, 38, 0.1);
+            border-bottom: 1px solid rgba(220, 38, 38, 0.3);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            font-size: 13px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            z-index: 10002;
+            position: relative;
+        }
+        .disclaimer-badge {
+            background: rgba(220, 38, 38, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .disclaimer-text {
+            color: var(--text-secondary);
+        }
+
+        /* PWA Install Banner */
+        .pwa-banner {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 242, 254, 0.1);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            width: 320px;
+            z-index: 10001;
+            backdrop-filter: blur(8px);
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .pwa-banner-content {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .pwa-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .pwa-banner-content h4 {
+            margin: 0 0 4px 0;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        .pwa-banner-content p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .pwa-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .pwa-btn-install {
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--primary) 100%);
+            border: none;
+            color: #0b0f19;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .pwa-btn-install:hover {
+            opacity: 0.9;
+        }
+        .pwa-btn-close {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .pwa-btn-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
     </style>
     <link rel="icon" type="image/webp" href="logo.webp">
     <!-- Google AdSense -->
@@ -1017,6 +1122,12 @@
          crossorigin="anonymous"></script>
 </head>
 <body>
+
+    <!-- Disclaimer Bar -->
+    <div class="disclaimer-bar">
+        <span class="disclaimer-badge">🛠️ Active Development</span>
+        <span class="disclaimer-text">ReceiptOptic is currently in active development. Features and user interface layouts may evolve as we refine performance and security.</span>
+    </div>
 
     <!-- Glow Orbs -->
     <div class="glow-orb orb-1"></div>
@@ -1872,7 +1983,47 @@
                 Got it, thanks!
             </button>
         </div>
+    <!-- PWA Install Banner -->
+    <div class="pwa-banner" id="pwaBanner">
+        <div class="pwa-banner-content">
+            <span class="pwa-icon">📲</span>
+            <div>
+                <h4>Install ReceiptOptic</h4>
+                <p>Add this app to your home screen for quick offline access.</p>
+            </div>
+        </div>
+        <div class="pwa-actions">
+            <button class="pwa-btn-install" id="pwaInstallBtn">Install</button>
+            <button class="pwa-btn-close" onclick="dismissPwaBanner()">Dismiss</button>
+        </div>
     </div>
+
+    <script>
+        let deferredPrompt;
+        const pwaBanner = document.getElementById('pwaBanner');
+        const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            pwaBanner.style.display = 'flex';
+        });
+
+        pwaInstallBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User choice: ${outcome}`);
+                deferredPrompt = null;
+                pwaBanner.style.display = 'none';
+            }
+        });
+
+        function dismissPwaBanner() {
+            pwaBanner.style.display = 'none';
+        }
+    </script>
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
