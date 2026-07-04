@@ -1070,11 +1070,11 @@
                 <h3>100% Offline Accuracy</h3>
                 <p>Zero-config instant parsing via local overrides. Vendor signature matching secures 100% accuracy, working completely without a network connection.</p>
             </div>
-            <!-- Card 2: Schedule C -->
+            <!-- Card 2: Schedule C & Tax Savings -->
             <div class="feature-card">
                 <div class="feature-icon">⚖️</div>
-                <h3>IRS Schedule C Mappings</h3>
-                <p>Automatically map business expenses to Schedule C tax lines. View YTD tax summaries and export audit-ready receipt archives with one click.</p>
+                <h3>IRS Schedule C & Tax Savings</h3>
+                <p>Automatically map itemized business expenses to Schedule C tax lines. Track YTD tax deductions and view estimated self-employment tax savings in real-time.</p>
             </div>
             <!-- Card 3: Gemini AI OCR Scanner -->
             <div class="feature-card">
@@ -1094,11 +1094,11 @@
                 <h3>Secure Cloud Backup</h3>
                 <p>Sync your local SQLite database securely via Supabase. Keeps your records backed up in the cloud and synced across your PC and mobile devices.</p>
             </div>
-            <!-- Card 6: Profile & Security Lock -->
+            <!-- Card 6: Biometrics & Auto-Lock -->
             <div class="feature-card">
-                <div class="feature-icon">👤</div>
-                <h3>Profile & Security Lock</h3>
-                <p>Customize tax profiles with your business logo and details. Secure your local finance database with an optional local passcode lock screen.</p>
+                <div class="feature-icon">🔑</div>
+                <h3>Biometrics & Auto-Lock</h3>
+                <p>Unlock the PC app securely using native Windows Hello (PIN, Face, or Fingerprint). Protects your finance ledger with automatic locking on background idle.</p>
             </div>
         </div>
     </section>
@@ -1136,19 +1136,19 @@
                 
                 <div class="receipt-selector-title">Select a Receipt:</div>
                 <div class="receipt-chips" id="receiptChips">
-                    <button class="receipt-chip active" onclick="selectReceipt('coffee')">☕ Coffee Shop ($14.50)</button>
-                    <button class="receipt-chip" onclick="selectReceipt('office')">📦 Office Supplies ($89.20)</button>
-                    <button class="receipt-chip" onclick="selectReceipt('software')">💻 Software Sub ($49.00)</button>
-                    <button class="receipt-chip" onclick="selectReceipt('rideshare')">🚕 Travel Cab ($28.50)</button>
+                    <button class="receipt-chip active" onclick="selectReceipt('wawa')">⛽ Wawa ($36.00)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('walmart')">🛒 Walmart ($140.27)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('costco')">📦 Costco ($378.98)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('mens_wearhouse')">👔 Men's Wearhouse ($368.54)</button>
                 </div>
 
                 <div class="receipt-preview-card" id="receiptPreview">
-                    <div class="receipt-preview-header">Tech Brew Coffee</div>
+                    <div class="receipt-preview-header">Wawa Store #5422</div>
                     <div class="receipt-preview-divider"></div>
-                    <div class="receipt-preview-row"><span>LARGE CAFFÈ LATTE</span><span>$6.50</span></div>
-                    <div class="receipt-preview-row"><span>AVOCADO TOAST</span><span>$8.00</span></div>
+                    <div class="receipt-preview-row"><span>UNLEADED REGULAR</span><span>$30.00</span></div>
+                    <div class="receipt-preview-row"><span>PREMIUM COFFEE & MUFFIN</span><span>$6.00</span></div>
                     <div class="receipt-preview-divider"></div>
-                    <div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$14.50</strong></span></div>
+                    <div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$36.00</strong></span></div>
                 </div>
             </div>
             
@@ -1280,7 +1280,43 @@
                             <a href="../ReceiptOpticDesktop.zip" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadPCZip" download onclick="showDownloadModal()">
                                 Download Zip
                             </a>
-                            <span class="size-info">Size: ~110MB | v2.1.0</span>
+                            <span class="size-info">Size: ~97MB | v1.8.0</span>
+                        </div>
+
+                        <!-- Android Card -->
+                        <div class="download-card">
+                            <h3>📱 Android Mobile</h3>
+                            <p>Mobile scanning app with SQLite local database, SQLCipher security, and Supabase synchronization.</p>
+                            <a href="../ReceiptOpticMobile.apk" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadMobileApk" download>
+                                Download APK
+                            </a>
+                            <span class="size-info">Size: ~33MB | v1.8.0</span>
+                        </div>
+                    </div>
+
+                    <!-- Installation Guide -->
+                    <div class="install-guide" style="margin-top: 40px; text-align: left; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 16px; padding: 25px;">
+                        <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; margin-bottom: 15px; color: var(--accent);">🛠️ Installation & Setup Guide</h3>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-wrap: wrap;">
+                            <div style="min-width: 250px;">
+                                <h4 style="margin-bottom: 8px; color: var(--text-primary);">💻 Windows Desktop Setup:</h4>
+                                <ol style="padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
+                                    <li>Download <strong>ReceiptOpticDesktop.zip</strong> using the button above.</li>
+                                    <li>Extract the contents of the ZIP folder to any directory (e.g., <code>C:\ReceiptOptic</code>).</li>
+                                    <li>Double-click <code>ReceiptOptic.exe</code> to launch the app instantly (no installation process required).</li>
+                                    <li><em>Optional:</em> Right-click <code>ReceiptOptic.exe</code> and select <strong>Send to -> Desktop (create shortcut)</strong> for easy access.</li>
+                                </ol>
+                            </div>
+                            <div style="min-width: 250px;">
+                                <h4 style="margin-bottom: 8px; color: var(--text-primary);">📱 Android Mobile Setup:</h4>
+                                <ol style="padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
+                                    <li>Download <strong>ReceiptOpticMobile.apk</strong> directly onto your device.</li>
+                                    <li>If prompted, enable <strong>"Install from Unknown Sources"</strong> in your device settings.</li>
+                                    <li>Open the downloaded `.apk` file and tap <strong>Install</strong>.</li>
+                                    <li>Launch the app from your home screen or app drawer.</li>
+                                </ol>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1314,87 +1350,110 @@
     <!-- Interactive Javascript Logic -->
     <script>
         const RECEIPTS_MOCK = {
-            coffee: {
-                vendor: "Tech Brew Coffee",
+            wawa: {
+                vendor: "Wawa",
                 date: "2026-06-18",
-                total: 14.50,
+                total: 36.00,
                 tax_amount: 0.00,
-                payment_method: "Apple Pay",
-                rawText: '<div class="receipt-preview-header">Tech Brew Coffee</div>' +
+                payment_method: "Credit Card",
+                rawText: '<div class="receipt-preview-header">Wawa Store #5422</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>LARGE CAFFÈ LATTE</span><span>$6.50</span></div>' +
-                          '<div class="receipt-preview-row"><span>AVOCADO TOAST</span><span>$8.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>UNLEADED REGULAR</span><span>$30.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>PREMIUM COFFEE & MUFFIN</span><span>$6.00</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$14.50</strong></span></div>',
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$36.00</strong></span></div>',
                 items: [
-                    { name: "Large Caffè Latte", price: 6.50, category: "Groceries", is_tax_deductible: false },
-                    { name: "Avocado Toast", price: 8.00, category: "Groceries", is_tax_deductible: false }
+                    { name: "Unleaded Fuel (10.144 Gal)", price: 30.00, category: "Other", is_tax_deductible: true },
+                    { name: "Premium Coffee & Muffin", price: 6.00, category: "Other", is_tax_deductible: false }
                 ],
                 chartData: [
-                    { label: "Groceries", amount: 14.50, color: "#00F2FE" }
+                    { label: "Other", amount: 36.00, color: "#A020F0" }
                 ]
             },
-            office: {
-                vendor: "Office Depot",
+            walmart: {
+                vendor: "Walmart",
                 date: "2026-06-14",
-                total: 89.20,
-                tax_amount: 5.00,
+                total: 140.27,
+                tax_amount: 5.33,
                 payment_method: "Debit Card (Visa)",
-                rawText: '<div class="receipt-preview-header">OFFICE DEPOT #4821</div>' +
+                rawText: '<div class="receipt-preview-header">WALMART SUPERCENTER</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>ERGONOMIC CHAIR CUSHION</span><span>$45.00</span></div>' +
-                          '<div class="receipt-preview-row"><span>PREMIUM NOTEBOOKS (3PK)</span><span>$15.00</span></div>' +
-                          '<div class="receipt-preview-row"><span>WIRELESS MOUSE & KBD</span><span>$29.20</span></div>' +
+                          '<div class="receipt-preview-row"><span>SNC REGISTERED 3100 BLK</span><span>$39.96</span></div>' +
+                          '<div class="receipt-preview-row"><span>TIME AND TRU SLUB TEE</span><span>$7.98</span></div>' +
+                          '<div class="receipt-preview-row"><span>GAIN LAUNDRY DETERGENT</span><span>$12.97</span></div>' +
+                          '<div class="receipt-preview-row"><span>GAIN FLINGS LAUNDRY PODS</span><span>$21.94</span></div>' +
+                          '<div class="receipt-preview-row"><span>HONEYCRISP APPLES & GROC</span><span>$52.09</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$89.20</span></div>' +
-                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$89.20</strong></span></div>',
+                          '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$134.94</span></div>' +
+                          '<div class="receipt-preview-row"><span>TAX</span><span>$5.33</span></div>' +
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$140.27</strong></span></div>',
                 items: [
-                    { name: "Ergonomic Mesh Chair Cushion", price: 45.00, category: "Office Expenses", is_tax_deductible: true },
-                    { name: "Premium Notebooks (3 Pack)", price: 15.00, category: "Office Expenses", is_tax_deductible: true },
-                    { name: "Wireless Keyboard & Mouse Combo", price: 29.20, category: "Office Expenses", is_tax_deductible: true }
+                    { name: "SNC Registered 3100 Black", price: 39.96, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Time and Tru Slub Tee", price: 7.98, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Gain Laundry Detergent Liquid", price: 12.97, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Gain Flings Laundry Pods", price: 21.94, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Honeycrisp Apples & Groceries", price: 52.09, category: "Groceries", is_tax_deductible: false }
                 ],
                 chartData: [
-                    { label: "Office Expenses", amount: 89.20, color: "#39FF14" }
+                    { label: "Groceries", amount: 52.09, color: "#00F2FE" },
+                    { label: "Clothing & Apparel", amount: 47.94, color: "#FF007F" },
+                    { label: "Household & Clean", amount: 34.91, color: "#39FF14" },
+                    { label: "Other (Tax)", amount: 5.33, color: "#A020F0" }
                 ]
             },
-            software: {
-                vendor: "Acme Web Services",
-                date: "2026-06-12",
-                total: 49.00,
-                tax_amount: 0.00,
-                payment_method: "Credit Card (Amex)",
-                rawText: '<div class="receipt-preview-header">ACME WEB SERVICES CO</div>' +
+            costco: {
+                vendor: "Costco Wholesale",
+                date: "2026-06-14",
+                total: 378.98,
+                tax_amount: 9.78,
+                payment_method: "Visa",
+                rawText: '<div class="receipt-preview-header">COSTCO WHOLESALE #221</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>DEV CLOUD SERVER - 1MO</span><span>$29.00</span></div>' +
-                          '<div class="receipt-preview-row"><span>MANAGED SQL DB STARTER</span><span>$20.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>NUDGED BEACH TOWEL</span><span>$22.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>ALMOND CRACKERS & SNACKS</span><span>$45.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>KIRKLAND FACIAL TISSUE</span><span>$15.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>KIRKLAND GOLF BALLS</span><span>$29.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>BULK MEAT & PRODUCE</span><span>$200.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>OTHER HOUSEHOLD ITEMS</span><span>$55.23</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$49.00</strong></span></div>',
+                          '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$369.20</span></div>' +
+                          '<div class="receipt-preview-row"><span>TAX (5.5%)</span><span>$9.78</span></div>' +
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$378.98</strong></span></div>',
                 items: [
-                    { name: "Developer Cloud Server - 1 Month", price: 29.00, category: "Other", is_tax_deductible: true },
-                    { name: "Managed SQL Database Starter", price: 20.00, category: "Other", is_tax_deductible: true }
+                    { name: "Nudged Beach Towel", price: 22.99, category: "Household & Cleaning", is_tax_deductible: true },
+                    { name: "Almond Crackers & Snacks", price: 45.00, category: "Groceries", is_tax_deductible: false },
+                    { name: "Kirkland Facial Tissue", price: 15.99, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Kirkland Signature Golf Balls", price: 29.99, category: "Other", is_tax_deductible: false },
+                    { name: "Bulk Meat & Produce", price: 200.00, category: "Groceries", is_tax_deductible: false },
+                    { name: "Other Household Items", price: 55.23, category: "Household & Cleaning", is_tax_deductible: false }
                 ],
                 chartData: [
-                    { label: "Other (Software)", amount: 49.00, color: "#A020F0" }
+                    { label: "Groceries", amount: 245.00, color: "#00F2FE" },
+                    { label: "Household & Clean", amount: 94.22, color: "#39FF14" },
+                    { label: "Other", amount: 39.76, color: "#A020F0" }
                 ]
             },
-            rideshare: {
-                vendor: "Metro Transit Corp",
+            mens_wearhouse: {
+                vendor: "Mens Wearhouse",
                 date: "2026-06-11",
-                total: 28.50,
-                tax_amount: 0.00,
+                total: 368.54,
+                tax_amount: 18.55,
                 payment_method: "Cash",
-                rawText: '<div class="receipt-preview-header">METRO TRANSIT RIDESHARE</div>' +
+                rawText: '<div class="receipt-preview-header">Mens Wearhouse #891</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>RIDESHARE TO AIRPORT</span><span>$24.00</span></div>' +
-                          '<div class="receipt-preview-row"><span>STANDARD BOOKING FEE</span><span>$4.50</span></div>' +
+                          '<div class="receipt-preview-row"><span>CLASSIC NOTCH CUT JACKET</span><span>$349.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>STORE TO STORE SHIPPING</span><span>$0.00</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$28.50</strong></span></div>',
+                          '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$349.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>TAX (5.3%)</span><span>$18.55</span></div>' +
+                          '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$368.54</strong></span></div>',
                 items: [
-                    { name: "Rideshare to Airport", price: 24.00, category: "Other", is_tax_deductible: true },
-                    { name: "Standard Booking Fee", price: 4.50, category: "Other", is_tax_deductible: false }
+                    { name: "Classic Notch Cut Jacket", price: 349.99, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Store to Store Shipping", price: 0.00, category: "Other", is_tax_deductible: false }
                 ],
                 chartData: [
-                    { label: "Other (Travel)", amount: 28.50, color: "#FF007F" }
+                    { label: "Clothing & Apparel", amount: 349.99, color: "#FF007F" },
+                    { label: "Other", amount: 18.55, color: "#A020F0" }
                 ]
             }
         };
