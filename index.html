@@ -1809,10 +1809,10 @@
     <script>
         const supabaseUrl = "https://lwxnuxwoskockzovmevb.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3eG51eHdvc2tvY2t6b3ZtZXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNDAzNDAsImV4cCI6MjA5NzYxNjM0MH0.5DqftWk7KKjjRn7nOa1bWDdbYTp3eQP8SUXM80hoOHU";
-        let supabase = null;
+        let supabaseClient = null;
         try {
             if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
             } else {
                 console.warn("Supabase library not loaded. Cloud sync features will be unavailable.");
             }
@@ -1825,12 +1825,12 @@
 
          // Check active session on load
         async function checkSession() {
-            if (!supabase) {
+            if (!supabaseClient) {
                 showAuthForm();
                 return;
             }
             try {
-                const { data: { session }, error } = await supabase.auth.getSession();
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
                 if (session) {
                     currentSession = session;
                     showDownloads(session.user.email);
@@ -1843,9 +1843,9 @@
         }
 
         // Listen to auth changes
-        if (supabase) {
+        if (supabaseClient) {
             try {
-                supabase.auth.onAuthStateChange((event, session) => {
+                supabaseClient.auth.onAuthStateChange((event, session) => {
                     if (session) {
                         currentSession = session;
                         showDownloads(session.user.email);
@@ -1902,7 +1902,7 @@
                 return;
             }
             
-            if (!supabase) {
+            if (!supabaseClient) {
                 errorMsg.innerText = "Cloud authentication service is currently unavailable. Please verify your network or disable adblocker restrictions.";
                 errorMsg.style.display = 'block';
                 return;
@@ -1912,7 +1912,7 @@
             
             if (authMode === 'signin') {
                 try {
-                    const { data, error } = await supabase.auth.signInWithPassword({
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
                         email: email,
                         password: password
                     });
@@ -1936,7 +1936,7 @@
                     return;
                 }
                 try {
-                    const { data, error } = await supabase.auth.signUp({
+                    const { data, error } = await supabaseClient.auth.signUp({
                         email: email,
                         password: password
                     });
@@ -1956,9 +1956,9 @@
         }
 
         async function handleLogout() {
-            if (supabase) {
+            if (supabaseClient) {
                 try {
-                    await supabase.auth.signOut();
+                    await supabaseClient.auth.signOut();
                 } catch (e) {
                     console.error("Sign out failed:", e);
                 }
@@ -1979,14 +1979,14 @@
                 return;
             }
             
-            if (!supabase) {
+            if (!supabaseClient) {
                 errorMsg.innerText = "Cloud authentication service is currently unavailable.";
                 errorMsg.style.display = 'block';
                 return;
             }
             
             try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
                     redirectTo: 'https://receiptoptic.com/reset-password.html'
                 });
                 
