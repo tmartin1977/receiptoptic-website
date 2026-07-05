@@ -1354,24 +1354,26 @@
                     <p style="margin-bottom: 25px; color: var(--text-secondary); text-align: center; font-size: 14px;">Create an account or sign in to download the Windows PC package.</p>
                     
                     <div class="auth-toggle">
-                        <button id="toggle-signin-btn" class="active" onclick="setAuthMode('signin')">Sign In</button>
-                        <button id="toggle-signup-btn" onclick="setAuthMode('signup')">Sign Up</button>
+                        <button type="button" id="toggle-signin-btn" class="active" onclick="setAuthMode('signin')">Sign In</button>
+                        <button type="button" id="toggle-signup-btn" onclick="setAuthMode('signup')">Sign Up</button>
                     </div>
                     
-                    <div class="auth-inputs">
-                        <input type="email" id="auth-email" placeholder="Email Address" required>
-                        <input type="password" id="auth-password" placeholder="Password" required>
-                        <div id="signup-extra-inputs" style="display: none;">
-                            <input type="password" id="auth-confirm-password" placeholder="Confirm Password">
+                    <form id="auth-form" onsubmit="event.preventDefault(); handleAuthSubmit();">
+                        <div class="auth-inputs">
+                            <input type="email" id="auth-email" placeholder="Email Address" required>
+                            <input type="password" id="auth-password" placeholder="Password" required>
+                            <div id="signup-extra-inputs" style="display: none;">
+                                <input type="password" id="auth-confirm-password" placeholder="Confirm Password">
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div id="auth-error-msg" class="auth-message error"></div>
-                    <div id="auth-success-msg" class="auth-message success"></div>
-                    
-                    <button id="auth-submit-btn" class="btn-primary" style="width: 100%; margin-top: 15px; padding: 12px; font-weight: 600; cursor: pointer;" onclick="handleAuthSubmit()">
-                        Sign In
-                    </button>
+                        
+                        <div id="auth-error-msg" class="auth-message error"></div>
+                        <div id="auth-success-msg" class="auth-message success"></div>
+                        
+                        <button type="submit" id="auth-submit-btn" class="btn-primary" style="width: 100%; margin-top: 15px; padding: 12px; font-weight: 600; cursor: pointer;">
+                            Sign In
+                        </button>
+                    </form>
                     
                     <div class="auth-footer-links" style="margin-top: 20px; font-size: 12px; text-align: center;">
                         <a href="javascript:void(0)" onclick="handleForgotPassword()" style="color: var(--neon-purple); text-decoration: none; font-weight: 500;">Forgot/Change Password?</a>
@@ -1394,7 +1396,8 @@
                             <span class="size-info">Size: ~97MB | v1.8.0</span>
                         </div>
 
-                        <!-- Android Card -->
+                        <!-- Android Card commented out
+                        <!--
                         <div class="download-card">
                             <h3>📱 Android Mobile</h3>
                             <p>Mobile scanning app with SQLite local database, SQLCipher security, and Supabase synchronization.</p>
@@ -1403,13 +1406,14 @@
                             </a>
                             <span class="size-info">Size: ~33MB | v1.8.0</span>
                         </div>
+                        -->
                     </div>
 
                     <!-- Installation Guide -->
                     <div class="install-guide" style="margin-top: 40px; text-align: left; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 16px; padding: 25px;">
                         <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; margin-bottom: 15px; color: var(--accent);">🛠️ Installation & Setup Guide</h3>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-wrap: wrap;">
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 20px; flex-wrap: wrap;">
                             <div style="min-width: 250px;">
                                 <h4 style="margin-bottom: 8px; color: var(--text-primary);">💻 Windows Desktop Setup:</h4>
                                 <ol style="padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
@@ -1419,6 +1423,8 @@
                                     <li><em>Optional:</em> Right-click <code>ReceiptOptic.exe</code> and select <strong>Send to -> Desktop (create shortcut)</strong> for easy access.</li>
                                 </ol>
                             </div>
+                            <!-- Android Mobile Setup commented out
+                            <!--
                             <div style="min-width: 250px;">
                                 <h4 style="margin-bottom: 8px; color: var(--text-primary);">📱 Android Mobile Setup:</h4>
                                 <ol style="padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
@@ -1428,6 +1434,7 @@
                                     <li>Launch the app from your home screen or app drawer.</li>
                                 </ol>
                             </div>
+                            -->
                         </div>
                     </div>
                 </div>
@@ -1792,32 +1799,55 @@
     <script>
         const supabaseUrl = "https://lwxnuxwoskockzovmevb.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3eG51eHdvc2tvY2t6b3ZtZXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwNDAzNDAsImV4cCI6MjA5NzYxNjM0MH0.5DqftWk7KKjjRn7nOa1bWDdbYTp3eQP8SUXM80hoOHU";
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        let supabase = null;
+        try {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            } else {
+                console.warn("Supabase library not loaded. Cloud sync features will be unavailable.");
+            }
+        } catch (e) {
+            console.error("Failed to initialize Supabase:", e);
+        }
 
         let currentSession = null;
         let authMode = 'signin';
 
-        // Check active session on load
+         // Check active session on load
         async function checkSession() {
-            const { data: { session }, error } = await supabase.auth.getSession();
-            if (session) {
-                currentSession = session;
-                showDownloads(session.user.email);
-            } else {
+            if (!supabase) {
+                showAuthForm();
+                return;
+            }
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (session) {
+                    currentSession = session;
+                    showDownloads(session.user.email);
+                } else {
+                    showAuthForm();
+                }
+            } catch (e) {
                 showAuthForm();
             }
         }
 
         // Listen to auth changes
-        supabase.auth.onAuthStateChange((event, session) => {
-            if (session) {
-                currentSession = session;
-                showDownloads(session.user.email);
-            } else {
-                currentSession = null;
-                showAuthForm();
+        if (supabase) {
+            try {
+                supabase.auth.onAuthStateChange((event, session) => {
+                    if (session) {
+                        currentSession = session;
+                        showDownloads(session.user.email);
+                    } else {
+                        currentSession = null;
+                        showAuthForm();
+                    }
+                });
+            } catch (e) {
+                console.error("Failed to setup auth state change listener:", e);
             }
-        });
+        }
 
         function showDownloads(email) {
             document.getElementById('auth-form-card').style.display = 'none';
@@ -1862,19 +1892,30 @@
                 return;
             }
             
+            if (!supabase) {
+                errorMsg.innerText = "Cloud authentication service is currently unavailable. Please verify your network or disable adblocker restrictions.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
             document.getElementById('auth-submit-btn').disabled = true;
             
             if (authMode === 'signin') {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                if (error) {
-                    errorMsg.innerText = error.message;
+                try {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    if (error) {
+                        errorMsg.innerText = error.message;
+                        errorMsg.style.display = 'block';
+                    } else {
+                        successMsg.innerText = "Success! Access granted.";
+                        successMsg.style.display = 'block';
+                    }
+                } catch (e) {
+                    errorMsg.innerText = e.message || "An unexpected error occurred.";
                     errorMsg.style.display = 'block';
-                } else {
-                    successMsg.innerText = "Success! Access granted.";
-                    successMsg.style.display = 'block';
                 }
             } else {
                 const confirmPassword = document.getElementById('auth-confirm-password').value;
@@ -1884,23 +1925,34 @@
                     document.getElementById('auth-submit-btn').disabled = false;
                     return;
                 }
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password
-                });
-                if (error) {
-                    errorMsg.innerText = error.message;
+                try {
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password
+                    });
+                    if (error) {
+                        errorMsg.innerText = error.message;
+                        errorMsg.style.display = 'block';
+                    } else {
+                        successMsg.innerText = "Signup successful! Check your email for confirmation or login.";
+                        successMsg.style.display = 'block';
+                    }
+                } catch (e) {
+                    errorMsg.innerText = e.message || "An unexpected error occurred.";
                     errorMsg.style.display = 'block';
-                } else {
-                    successMsg.innerText = "Signup successful! Check your email for confirmation or login.";
-                    successMsg.style.display = 'block';
                 }
             }
             document.getElementById('auth-submit-btn').disabled = false;
         }
 
         async function handleLogout() {
-            await supabase.auth.signOut();
+            if (supabase) {
+                try {
+                    await supabase.auth.signOut();
+                } catch (e) {
+                    console.error("Sign out failed:", e);
+                }
+            }
         }
 
         async function handleForgotPassword() {
@@ -1917,16 +1969,27 @@
                 return;
             }
             
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: 'https://receiptoptic.com/reset-password.html'
-            });
-            
-            if (error) {
-                errorMsg.innerText = error.message;
+            if (!supabase) {
+                errorMsg.innerText = "Cloud authentication service is currently unavailable.";
                 errorMsg.style.display = 'block';
-            } else {
-                successMsg.innerText = "Password reset email sent! Check your inbox.";
-                successMsg.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://receiptoptic.com/reset-password.html'
+                });
+                
+                if (error) {
+                    errorMsg.innerText = error.message;
+                    errorMsg.style.display = 'block';
+                } else {
+                    successMsg.innerText = "Password reset email sent! Check your inbox.";
+                    successMsg.style.display = 'block';
+                }
+            } catch (e) {
+                errorMsg.innerText = e.message || "An unexpected error occurred.";
+                errorMsg.style.display = 'block';
             }
         }
 
