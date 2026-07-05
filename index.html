@@ -1257,17 +1257,17 @@
                 
                 <div class="receipt-selector-title">Select a Receipt:</div>
                 <div class="receipt-chips" id="receiptChips">
-                    <button class="receipt-chip active" onclick="selectReceipt('wawa')">⛽ Wawa ($36.00)</button>
-                    <button class="receipt-chip" onclick="selectReceipt('walmart')">🛒 Walmart ($140.27)</button>
-                    <button class="receipt-chip" onclick="selectReceipt('costco')">📦 Costco ($378.98)</button>
-                    <button class="receipt-chip" onclick="selectReceipt('mens_wearhouse')">👔 Men's Wearhouse ($368.54)</button>
+                    <button class="receipt-chip active" onclick="selectReceipt('gas_station')">⛽ Gas Station ($36.00)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('superstore')">🛒 Superstore ($140.27)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('wholesale')">📦 Wholesale Club ($378.98)</button>
+                    <button class="receipt-chip" onclick="selectReceipt('apparel_shop')">👔 Apparel Shop ($368.54)</button>
                 </div>
 
                 <div class="receipt-preview-card" id="receiptPreview">
-                    <div class="receipt-preview-header">Wawa Store #5422</div>
+                    <div class="receipt-preview-header">QUICKSTOP GAS #104</div>
                     <div class="receipt-preview-divider"></div>
-                    <div class="receipt-preview-row"><span>UNLEADED REGULAR</span><span>$30.00</span></div>
-                    <div class="receipt-preview-row"><span>PREMIUM COFFEE & MUFFIN</span><span>$6.00</span></div>
+                    <div class="receipt-preview-row"><span>UNLEADED FUEL</span><span>$30.00</span></div>
+                    <div class="receipt-preview-row"><span>COFFEE & DONUT</span><span>$6.00</span></div>
                     <div class="receipt-preview-divider"></div>
                     <div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$36.00</strong></span></div>
                 </div>
@@ -1473,49 +1473,49 @@
     <!-- Interactive Javascript Logic -->
     <script>
         const RECEIPTS_MOCK = {
-            wawa: {
-                vendor: "Wawa",
+            gas_station: {
+                vendor: "QuickStop Gas",
                 date: "2026-06-18",
                 total: 36.00,
                 tax_amount: 0.00,
                 payment_method: "Credit Card",
-                rawText: '<div class="receipt-preview-header">Wawa Store #5422</div>' +
+                rawText: '<div class="receipt-preview-header">QUICKSTOP GAS #104</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>UNLEADED REGULAR</span><span>$30.00</span></div>' +
-                          '<div class="receipt-preview-row"><span>PREMIUM COFFEE & MUFFIN</span><span>$6.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>UNLEADED FUEL</span><span>$30.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>COFFEE & DONUT</span><span>$6.00</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
                           '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$36.00</strong></span></div>',
                 items: [
-                    { name: "Unleaded Fuel (10.144 Gal)", price: 30.00, category: "Other", is_tax_deductible: true },
-                    { name: "Premium Coffee & Muffin", price: 6.00, category: "Other", is_tax_deductible: false }
+                    { name: "Unleaded Fuel (10.0 Gal)", price: 30.00, category: "Other", is_tax_deductible: true },
+                    { name: "Coffee & Donut", price: 6.00, category: "Other", is_tax_deductible: false }
                 ],
                 chartData: [
                     { label: "Other", amount: 36.00, color: "#A020F0" }
                 ]
             },
-            walmart: {
-                vendor: "Walmart",
+            superstore: {
+                vendor: "MegaMart Superstore",
                 date: "2026-06-14",
                 total: 140.27,
                 tax_amount: 5.33,
-                payment_method: "Debit Card (Visa)",
-                rawText: '<div class="receipt-preview-header">WALMART SUPERCENTER</div>' +
+                payment_method: "Debit Card",
+                rawText: '<div class="receipt-preview-header">MEGAMART SUPERCENTER</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>SNC REGISTERED 3100 BLK</span><span>$39.96</span></div>' +
-                          '<div class="receipt-preview-row"><span>TIME AND TRU SLUB TEE</span><span>$7.98</span></div>' +
-                          '<div class="receipt-preview-row"><span>GAIN LAUNDRY DETERGENT</span><span>$12.97</span></div>' +
-                          '<div class="receipt-preview-row"><span>GAIN FLINGS LAUNDRY PODS</span><span>$21.94</span></div>' +
-                          '<div class="receipt-preview-row"><span>HONEYCRISP APPLES & GROC</span><span>$52.09</span></div>' +
+                          '<div class="receipt-preview-row"><span>USB-C CHARGING CABLE</span><span>$39.96</span></div>' +
+                          '<div class="receipt-preview-row"><span>COTTON CREW T-SHIRT</span><span>$7.98</span></div>' +
+                          '<div class="receipt-preview-row"><span>LAUNDRY DETERGENT</span><span>$12.97</span></div>' +
+                          '<div class="receipt-preview-row"><span>LAUNDRY PODS 42CT</span><span>$21.94</span></div>' +
+                          '<div class="receipt-preview-row"><span>FRESH APPLES & GROCERIES</span><span>$52.09</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
                           '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$134.94</span></div>' +
                           '<div class="receipt-preview-row"><span>TAX</span><span>$5.33</span></div>' +
                           '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$140.27</strong></span></div>',
                 items: [
-                    { name: "SNC Registered 3100 Black", price: 39.96, category: "Clothing & Apparel", is_tax_deductible: false },
-                    { name: "Time and Tru Slub Tee", price: 7.98, category: "Clothing & Apparel", is_tax_deductible: false },
-                    { name: "Gain Laundry Detergent Liquid", price: 12.97, category: "Household & Cleaning", is_tax_deductible: false },
-                    { name: "Gain Flings Laundry Pods", price: 21.94, category: "Household & Cleaning", is_tax_deductible: false },
-                    { name: "Honeycrisp Apples & Groceries", price: 52.09, category: "Groceries", is_tax_deductible: false }
+                    { name: "USB-C Charging Cable", price: 39.96, category: "Office & Tech", is_tax_deductible: true },
+                    { name: "Cotton Crew T-Shirt", price: 7.98, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Laundry Detergent Liquid", price: 12.97, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Laundry Pods 42ct", price: 21.94, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Fresh Apples & Groceries", price: 52.09, category: "Groceries", is_tax_deductible: false }
                 ],
                 chartData: [
                     { label: "Groceries", amount: 52.09, color: "#00F2FE" },
@@ -1524,18 +1524,18 @@
                     { label: "Other (Tax)", amount: 5.33, color: "#A020F0" }
                 ]
             },
-            costco: {
-                vendor: "Costco Wholesale",
+            wholesale: {
+                vendor: "Metro Wholesale Club",
                 date: "2026-06-14",
                 total: 378.98,
                 tax_amount: 9.78,
                 payment_method: "Visa",
-                rawText: '<div class="receipt-preview-header">COSTCO WHOLESALE #221</div>' +
+                rawText: '<div class="receipt-preview-header">METRO WHOLESALE CLUB #221</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>NUDGED BEACH TOWEL</span><span>$22.99</span></div>' +
-                          '<div class="receipt-preview-row"><span>ALMOND CRACKERS & SNACKS</span><span>$45.00</span></div>' +
-                          '<div class="receipt-preview-row"><span>KIRKLAND FACIAL TISSUE</span><span>$15.99</span></div>' +
-                          '<div class="receipt-preview-row"><span>KIRKLAND GOLF BALLS</span><span>$29.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>MICROFIBER TOWELS 12PK</span><span>$22.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>WHOLE GRAIN CRACKERS</span><span>$45.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>PREMIUM TISSUES 8PK</span><span>$15.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>PRACTICE GOLF BALLS</span><span>$29.99</span></div>' +
                           '<div class="receipt-preview-row"><span>BULK MEAT & PRODUCE</span><span>$200.00</span></div>' +
                           '<div class="receipt-preview-row"><span>OTHER HOUSEHOLD ITEMS</span><span>$55.23</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
@@ -1543,10 +1543,10 @@
                           '<div class="receipt-preview-row"><span>TAX (5.5%)</span><span>$9.78</span></div>' +
                           '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$378.98</strong></span></div>',
                 items: [
-                    { name: "Nudged Beach Towel", price: 22.99, category: "Household & Cleaning", is_tax_deductible: true },
-                    { name: "Almond Crackers & Snacks", price: 45.00, category: "Groceries", is_tax_deductible: false },
-                    { name: "Kirkland Facial Tissue", price: 15.99, category: "Household & Cleaning", is_tax_deductible: false },
-                    { name: "Kirkland Signature Golf Balls", price: 29.99, category: "Other", is_tax_deductible: false },
+                    { name: "Microfiber Towels 12pk", price: 22.99, category: "Household & Cleaning", is_tax_deductible: true },
+                    { name: "Whole Grain Crackers", price: 45.00, category: "Groceries", is_tax_deductible: false },
+                    { name: "Premium Tissues 8pk", price: 15.99, category: "Household & Cleaning", is_tax_deductible: false },
+                    { name: "Practice Golf Balls", price: 29.99, category: "Other", is_tax_deductible: false },
                     { name: "Bulk Meat & Produce", price: 200.00, category: "Groceries", is_tax_deductible: false },
                     { name: "Other Household Items", price: 55.23, category: "Household & Cleaning", is_tax_deductible: false }
                 ],
@@ -1556,23 +1556,23 @@
                     { label: "Other", amount: 39.76, color: "#A020F0" }
                 ]
             },
-            mens_wearhouse: {
-                vendor: "Mens Wearhouse",
+            apparel_shop: {
+                vendor: "Apparel Shop",
                 date: "2026-06-11",
                 total: 368.54,
                 tax_amount: 18.55,
                 payment_method: "Cash",
-                rawText: '<div class="receipt-preview-header">Mens Wearhouse #891</div>' +
+                rawText: '<div class="receipt-preview-header">APPAREL SHOP #891</div>' +
                           '<div class="receipt-preview-divider"></div>' +
-                          '<div class="receipt-preview-row"><span>CLASSIC NOTCH CUT JACKET</span><span>$349.99</span></div>' +
-                          '<div class="receipt-preview-row"><span>STORE TO STORE SHIPPING</span><span>$0.00</span></div>' +
+                          '<div class="receipt-preview-row"><span>CLASSIC WOOL BLAZER</span><span>$349.99</span></div>' +
+                          '<div class="receipt-preview-row"><span>SHIPPING & HANDLING</span><span>$0.00</span></div>' +
                           '<div class="receipt-preview-divider"></div>' +
                           '<div class="receipt-preview-row"><span>SUBTOTAL</span><span>$349.99</span></div>' +
                           '<div class="receipt-preview-row"><span>TAX (5.3%)</span><span>$18.55</span></div>' +
                           '<div class="receipt-preview-row"><span><strong>TOTAL</strong></span><span><strong>$368.54</strong></span></div>',
                 items: [
-                    { name: "Classic Notch Cut Jacket", price: 349.99, category: "Clothing & Apparel", is_tax_deductible: false },
-                    { name: "Store to Store Shipping", price: 0.00, category: "Other", is_tax_deductible: false }
+                    { name: "Classic Wool Blazer", price: 349.99, category: "Clothing & Apparel", is_tax_deductible: false },
+                    { name: "Shipping & Handling", price: 0.00, category: "Other", is_tax_deductible: false }
                 ],
                 chartData: [
                     { label: "Clothing & Apparel", amount: 349.99, color: "#FF007F" },
@@ -1581,7 +1581,7 @@
             }
         };
         
-        let selectedReceiptId = 'coffee';
+        let selectedReceiptId = 'gas_station';
 
         function selectReceipt(id) {
             selectedReceiptId = id;
