@@ -144,7 +144,7 @@
             backdrop-filter: blur(12px);
             background-color: rgba(7, 9, 19, 0.8);
             position: fixed;
-            top: 0;
+            top: 38px;
             left: 0;
             z-index: 100;
         }
@@ -191,7 +191,7 @@
 
         /* Hero Section */
         .hero {
-            padding: 160px 40px 100px 40px;
+            padding: 198px 40px 100px 40px;
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
             max-width: 1200px;
@@ -662,12 +662,16 @@
 
         /* Responsive Design */
         @media (max-width: 900px) {
+            .disclaimer-bar {
+                height: 54px;
+            }
             header {
                 padding: 15px 20px;
+                top: 54px;
             }
             .hero {
                 grid-template-columns: 1fr;
-                padding-top: 120px;
+                padding-top: 154px;
                 text-align: center;
                 gap: 40px;
             }
@@ -1012,7 +1016,7 @@
         }
         /* Disclaimer Bar */
         .disclaimer-bar {
-            background: rgba(220, 38, 38, 0.1);
+            background: rgba(220, 38, 38, 0.15);
             border-bottom: 1px solid rgba(220, 38, 38, 0.3);
             color: var(--text-primary);
             padding: 8px 16px;
@@ -1023,8 +1027,14 @@
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
-            z-index: 10002;
-            position: relative;
+            z-index: 10005;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 38px;
+            box-sizing: border-box;
+            background-color: rgba(7, 9, 19, 0.95);
         }
         .disclaimer-badge {
             background: rgba(220, 38, 38, 0.2);
