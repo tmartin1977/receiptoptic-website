@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReceiptOptic | Secure Bank Link</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --neon-purple: #9d4edd;
+            --neon-cyan: #00e5ff;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, #1e1135 0%, #0b0f19 70%);
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            padding: 40px 30px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 420px;
+            width: 85%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 50px rgba(157, 78, 221, 0.1);
+            box-sizing: border-box;
+            transform: translateY(0);
+            transition: all 0.4s ease;
+        }
+
+        h2 {
+            font-weight: 700;
+            font-size: 28px;
+            margin-top: 0;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--neon-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-size: 15px;
+            font-weight: 300;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--neon-purple) 0%, #7b2cbf 100%);
+            color: #ffffff;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            outline: none;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(157, 78, 221, 0.6), 0 0 15px rgba(0, 229, 255, 0.2);
+            background: linear-gradient(135deg, #a255e8 0%, #8c3ce6 100%);
+        }
+
+        .btn:disabled {
+            background: #2e3545;
+            color: #6b7280;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top: 2px solid #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--neon-cyan);
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: rgba(0, 229, 255, 0.1);
+            border: 2px solid var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease;
+        }
+
+        .success-checkmark svg {
+            width: 40px;
+            height: 40px;
+            fill: none;
+            stroke: var(--neon-cyan);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: draw 0.6s ease forwards 0.2s;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes draw {
+            100% { stroke-dashoffset: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="card-content">
+        <h2>ReceiptOptic</h2>
+        <p>Ready to securely link your bank account via Plaid. All connections are fully encrypted and protected.</p>
+        <button class="btn" id="link-button" disabled>
+            <div class="spinner" id="spinner"></div>
+            <span id="btn-text">Initializing Secure Link...</span>
+        </button>
+        <div class="status-text" id="status-text">Fetching link configuration...</div>
+    </div>
+
+    <!-- Plaid Link JS -->
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+    <script>
+        const statusText = document.getElementById("status-text");
+        const linkButton = document.getElementById("link-button");
+        const spinner = document.getElementById("spinner");
+        const btnText = document.getElementById("btn-text");
+
+        // Parse query params
+        const urlParams = new URLSearchParams(window.location.search);
+        const userid = urlParams.get('userid') || urlParams.get('userId') || 'tmartin1977';
+
+        // Base URL of your Supabase Edge Functions
+        const edgeFunctionUrl = 'https://lwxnuxwoskockzovmevb.supabase.co/functions/v1/plaid-bridge';
+
+        let handler = null;
+
+        async function initializePlaid() {
+            try {
+                spinner.style.display = "inline-block";
+                linkButton.disabled = true;
+
+                // Request link token from Supabase Edge Function
+                const response = await fetch(edgeFunctionUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'create_link_token', userid: userid })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || 'Failed to generate link token');
+                }
+
+                statusText.textContent = "Secure connection ready.";
+                spinner.style.display = "none";
+                btnText.textContent = "🔗 Connect Bank Account";
+                linkButton.disabled = false;
+
+                // Create Plaid Handler
+                handler = Plaid.create({
+                    token: data.link_token,
+                    onSuccess: async (public_token, metadata) => {
+                        statusText.textContent = "Exchanging security tokens...";
+                        btnText.textContent = "Finalizing Link...";
+                        linkButton.disabled = true;
+                        spinner.style.display = "inline-block";
+
+                        try {
+                            const exchangeResponse = await fetch(edgeFunctionUrl, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    action: 'exchange_token',
+                                    public_token: public_token,
+                                    userid: userid
+                                })
+                            });
+
+                            const exchangeData = await exchangeResponse.json();
+
+                            if (!exchangeResponse.ok || exchangeData.error) {
+                                throw new Error(exchangeData.error || 'Failed to exchange token');
+                            }
+
+                            // Show stunning success state
+                            document.getElementById("card-content").innerHTML = `
+                                <div class="success-checkmark">
+                                    <svg viewBox="0 0 52 52">
+                                        <path d="M14 27 l8 8 l20 -20"/>
+                                    </svg>
+                                </div>
+                                <h2 style="color: var(--neon-cyan);">Bank Linked Successfully!</h2>
+                                <p>Your bank connection is active. You can now return to the ReceiptOptic app.</p>
+                            `;
+                        } catch (exchangeErr) {
+                            statusText.style.color = "#ff3333";
+                            statusText.textContent = "Exchange failed: " + exchangeErr.message;
+                            spinner.style.display = "none";
+                            btnText.textContent = "Retry Link";
+                            linkButton.disabled = false;
+                        }
+                    },
+                    onExit: (err, metadata) => {
+                        if (err != null) {
+                            console.error("Plaid Link Exit Error:", err);
+                            statusText.style.color = "#ff3333";
+                            statusText.textContent = "Link closed with error: " + err.message;
+                        } else {
+                            statusText.textContent = "Link session canceled.";
+                        }
+                    }
+                });
+
+            } catch (err) {
+                console.error("Initialization Error:", err);
+                statusText.style.color = "#ff3333";
+                statusText.textContent = err.message;
+                spinner.style.display = "none";
+                btnText.textContent = "Initialization Failed";
+            }
+        }
+
+        linkButton.addEventListener("click", () => {
+            if (handler) {
+                handler.open();
+            }
+        });
+
+        // Initialize on load
+        initializePlaid();
+    </script>
+</body>
+</html>
