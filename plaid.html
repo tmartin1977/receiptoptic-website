@@ -206,8 +206,8 @@
                 btnText.textContent = "🔗 Connect Bank Account";
                 linkButton.disabled = false;
 
-                // Create Plaid Handler
-                handler = Plaid.create({
+                // Create Plaid Handler config
+                const plaidConfig = {
                     token: data.link_token,
                     onSuccess: async (public_token, metadata) => {
                         statusText.textContent = "Exchanging security tokens...";
@@ -259,7 +259,19 @@
                             statusText.textContent = "Link session canceled.";
                         }
                     }
-                });
+                };
+
+                // Handle OAuth redirect resumption
+                if (window.location.href.includes("oauth_state_id")) {
+                    plaidConfig.receivedRedirectUri = window.location.href;
+                }
+
+                handler = Plaid.create(plaidConfig);
+
+                // Auto-open Plaid Link if we just returned from an OAuth redirect
+                if (window.location.href.includes("oauth_state_id")) {
+                    handler.open();
+                }
 
             } catch (err) {
                 console.error("Initialization Error:", err);
