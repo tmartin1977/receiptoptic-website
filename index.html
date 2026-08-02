@@ -1405,54 +1405,48 @@
                     <p style="margin-bottom: 10px; color: var(--text-secondary);">You are logged in as <strong id="logged-in-user-email"></strong>.</p>
                     <a href="javascript:void(0)" onclick="handleLogout()" style="color: #ff007f; font-size: 13px; text-decoration: none; font-weight: bold; display: inline-block; margin-bottom: 25px;">Logout</a>
                     
-                    <div class="download-grid">
+                    <div class="download-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 20px;">
                         <!-- PC Card -->
-                        <div class="download-card">
-                            <h3>💻 Windows PC</h3>
-                            <p>Complete desktop application with dark dashboard, CSV tax exports, and database preservation.</p>
-                            <a href="javascript:void(0)" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadPCZip">
-                                Download Zip
+                        <div class="download-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center;">
+                            <h3 style="margin-bottom: 10px;">💻 Windows PC</h3>
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px; min-height: 60px;">Complete desktop application with dark dashboard, CSV tax exports, and database preservation.</p>
+                            <a href="mailto:ReceiptOptic@yahoo.com?subject=Request Windows PC Access" class="btn-primary" style="padding: 10px 20px; font-size: 13px;">
+                                Request Access
                             </a>
-                            <span class="size-info">Size: ~97MB | v2.0.0 (Premium Launch)</span>
+                            <span class="size-info" style="display: block; font-size: 11px; color: var(--text-secondary); margin-top: 10px;">Status: Closed Beta | v2.0.0</span>
+                        </div>
+
+                        <!-- macOS Card -->
+                        <div class="download-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center;">
+                            <h3 style="margin-bottom: 10px;">🍎 macOS (MacBook)</h3>
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px; min-height: 60px;">Universal desktop application verified for macOS standalone runtime (Intel & Apple Silicon).</p>
+                            <a href="mailto:ReceiptOptic@yahoo.com?subject=Request macOS Access" class="btn-primary" style="padding: 10px 20px; font-size: 13px;">
+                                Request Access
+                            </a>
+                            <span class="size-info" style="display: block; font-size: 11px; color: var(--text-secondary); margin-top: 10px;">Status: Closed Beta | v2.0.0</span>
                         </div>
 
                         <!-- Android Card -->
-                        <div class="download-card">
-                            <h3>📱 Android Mobile</h3>
-                            <p>Mobile scanning app with SQLite local database, SQLCipher security, and Supabase synchronization.</p>
-                            <a href="javascript:void(0)" class="btn-primary" style="padding: 10px 20px; font-size: 13px;" id="btnDownloadMobileApk">
-                                Download APK
+                        <div class="download-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center;">
+                            <h3 style="margin-bottom: 10px;">🤖 Android Mobile</h3>
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px; min-height: 60px;">Mobile scanning app featuring Z Fold adaptive layouts, local SQLCipher security, and Supabase sync.</p>
+                            <a href="mailto:ReceiptOptic@yahoo.com?subject=Request Android Access" class="btn-primary" style="padding: 10px 20px; font-size: 13px;">
+                                Request Access
                             </a>
-                            <span class="size-info">Size: ~31MB | v2.0.0 (Premium Launch)</span>
+                            <span class="size-info" style="display: block; font-size: 11px; color: var(--text-secondary); margin-top: 10px;">Status: Closed Beta | v2.0.0</span>
                         </div>
-                    </div>
-                    <p style="margin-top: 20px; font-size: 13px; color: var(--text-secondary); text-align: center;">Official Release build provided here includes our Zero-Config Managed Cloud AI Service for plug-and-play receipt parsing.</p>
 
-                    <!-- Installation Guide -->
-                    <div class="install-guide" style="margin-top: 40px; text-align: left; background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 16px; padding: 25px;">
-                        <h3 style="font-family: 'Outfit', sans-serif; font-size: 20px; margin-bottom: 15px; color: var(--accent);">🛠️ Installation & Setup Guide</h3>
-                        
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
-                            <div style="min-width: 250px;">
-                                <h4 style="margin-bottom: 8px; color: var(--text-primary);">💻 Windows Desktop Setup:</h4>
-                                <ol style="padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
-                                    <li>Download <strong>ReceiptOpticDesktop.zip</strong> using the button above.</li>
-                                    <li>Extract the contents of the ZIP folder to any directory (e.g., <code>C:\ReceiptOptic</code>).</li>
-                                    <li>Double-click <code>ReceiptOptic.exe</code> to launch the app instantly (no installation process required).</li>
-                                    <li><em>Optional:</em> Right-click <code>ReceiptOptic.exe</code> and select <strong>Send to -> Desktop (create shortcut)</strong> for easy access.</li>
-                                </ol>
-                            </div>
-                            <div style="min-width: 250px;">
-                                <h4 style="margin-bottom: 8px; color: var(--text-primary);">📱 Android Mobile Setup:</h4>
-                                <ol style="padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
-                                    <li>Download <strong>ReceiptOpticMobile.apk</strong> directly onto your device.</li>
-                                    <li>If prompted, enable <strong>"Install from Unknown Sources"</strong> in your device settings.</li>
-                                    <li>Open the downloaded `.apk` file and tap <strong>Install</strong>.</li>
-                                    <li>Launch the app from your home screen or app drawer.</li>
-                                </ol>
-                            </div>
+                        <!-- iOS Card -->
+                        <div class="download-card" style="background: rgba(255,255,255,0.02); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center;">
+                            <h3 style="margin-bottom: 10px;">🍏 iOS (iPhone & iPad)</h3>
+                            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 15px; min-height: 60px;">Native iOS rendering targets optimized for iPhone and iPad viewports & Apple CoreImage.</p>
+                            <a href="mailto:ReceiptOptic@yahoo.com?subject=Request iOS Access" class="btn-primary" style="padding: 10px 20px; font-size: 13px;">
+                                Request Access
+                            </a>
+                            <span class="size-info" style="display: block; font-size: 11px; color: var(--text-secondary); margin-top: 10px;">Status: Closed Beta | v2.0.0</span>
                         </div>
                     </div>
+                    <p style="margin-top: 20px; font-size: 13px; color: var(--text-secondary); text-align: center;">Official builds are currently distributed to active beta testers. Press "Request Access" to request installation slots.</p>
                 </div>
             </div>
         </div>
