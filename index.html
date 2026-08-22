@@ -1151,64 +1151,6 @@
             opacity: 0.7;
         }
 
-        /* Cookie Consent Banner */
-        .consent-banner {
-            position: fixed;
-            bottom: 24px;
-            left: 24px;
-            background: rgba(15, 23, 42, 0.95);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 242, 254, 0.1);
-            display: none;
-            flex-direction: column;
-            gap: 14px;
-            width: 340px;
-            max-width: calc(100vw - 48px);
-            z-index: 10002;
-            backdrop-filter: blur(8px);
-            animation: slideUp 0.3s ease-out;
-        }
-        .consent-banner p {
-            margin: 0;
-            font-size: 12px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-        .consent-banner a {
-            color: var(--accent);
-        }
-        .consent-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .consent-actions button {
-            flex: 1;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: opacity 0.3s, background 0.3s;
-            font-family: 'Outfit', sans-serif;
-        }
-        .consent-btn-accept {
-            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--primary) 100%);
-            border: none;
-            color: #0b0f19;
-        }
-        .consent-btn-accept:hover {
-            opacity: 0.9;
-        }
-        .consent-btn-decline {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-primary);
-        }
-        .consent-btn-decline:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
     </style>
     <link rel="icon" type="image/webp" href="logo.webp">
     <!-- Google Consent Mode v2 - Default State (denied until visitor opts in via cookie banner) -->
@@ -2209,14 +2151,9 @@
         </div>
     </div>
 
-    <!-- Cookie / Ad Consent Banner -->
-    <div class="consent-banner" id="consentBanner">
-        <p>We use cookies for site functionality, analytics, and to show ads (via Google AdSense). See our <a href="privacy.html">Privacy Policy</a> for details.</p>
-        <div class="consent-actions">
-            <button class="consent-btn-decline" id="consentDeclineBtn">Decline</button>
-            <button class="consent-btn-accept" id="consentAcceptBtn">Accept</button>
-        </div>
-    </div>
+    <!-- Cookie/ad consent is handled by Google's CMP (configured in AdSense > Privacy & messaging),
+         which reads/writes the same Consent Mode v2 API via the default-denied snippet in <head>.
+         No custom banner needed here - Google's CMP injects its own UI automatically. -->
 
     <script>
         let deferredPrompt;
@@ -2226,19 +2163,8 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Avoid overlapping the cookie consent banner: if consent hasn't been
-            // resolved yet, wait for it (see initConsentBanner()'s Accept/Decline
-            // handlers below, which call maybeShowPwaBanner() once consent is set).
-            if (localStorage.getItem('cookieConsentChoice')) {
-                pwaBanner.style.display = 'flex';
-            }
+            pwaBanner.style.display = 'flex';
         });
-
-        function maybeShowPwaBanner() {
-            if (deferredPrompt) {
-                pwaBanner.style.display = 'flex';
-            }
-        }
 
         pwaInstallBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
@@ -2253,47 +2179,6 @@
         function dismissPwaBanner() {
             pwaBanner.style.display = 'none';
         }
-    </script>
-
-    <script>
-        const consentBanner = document.getElementById('consentBanner');
-        const consentAcceptBtn = document.getElementById('consentAcceptBtn');
-        const consentDeclineBtn = document.getElementById('consentDeclineBtn');
-
-        function grantConsent() {
-            gtag('consent', 'update', {
-                'ad_storage': 'granted',
-                'ad_user_data': 'granted',
-                'ad_personalization': 'granted',
-                'analytics_storage': 'granted'
-            });
-        }
-
-        function initConsentBanner() {
-            const choice = localStorage.getItem('cookieConsentChoice');
-            if (choice === 'accepted') {
-                grantConsent();
-            } else if (choice === 'declined') {
-                // Leave default-denied consent state in place; ads remain non-personalized only.
-            } else {
-                consentBanner.style.display = 'flex';
-            }
-        }
-
-        consentAcceptBtn.addEventListener('click', () => {
-            grantConsent();
-            localStorage.setItem('cookieConsentChoice', 'accepted');
-            consentBanner.style.display = 'none';
-            if (typeof maybeShowPwaBanner === 'function') maybeShowPwaBanner();
-        });
-
-        consentDeclineBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsentChoice', 'declined');
-            consentBanner.style.display = 'none';
-            if (typeof maybeShowPwaBanner === 'function') maybeShowPwaBanner();
-        });
-
-        initConsentBanner();
     </script>
 
     <script>
