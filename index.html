@@ -3,10 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReceiptOptic - Offline-First Receipt Scanner & Expense Ledger</title>
-    <meta name="description" content="ReceiptOptic is an offline-first financial ledger. Scan receipts with local overrides and 100% accuracy, map business expenses to Schedule C tax categories, and track budgets with beautiful flat 2D charts.">
-    <meta name="keywords" content="receipt scanner, expense tracker, tax calculator, Schedule C, Gemini AI, SQLite ledger, business expenses">
-    
+    <title>ReceiptOptic - Receipt Scanner, Bank Sync & Tax Tracker</title>
+    <meta name="description" content="Scan receipts with cloud AI, link bank and investment accounts via Plaid, and map expenses to Schedule C tax categories.">
+    <meta name="keywords" content="receipt scanner, expense tracker, bank account linking, Plaid, investment tracking, net worth tracker, Schedule C tax calculator, budget tracker, business expense tracker">
+    <link rel="canonical" href="https://receiptoptic.com/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="ReceiptOptic - Receipt Scanner, Bank Sync & Tax Tracker">
+    <meta property="og:description" content="Scan receipts with cloud AI, link bank and investment accounts via Plaid, and map expenses to Schedule C tax categories.">
+    <meta property="og:url" content="https://receiptoptic.com/">
+    <meta property="og:image" content="https://receiptoptic.com/dashboard_preview.png">
+    <meta property="og:site_name" content="ReceiptOptic">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ReceiptOptic - Receipt Scanner, Bank Sync & Tax Tracker">
+    <meta name="twitter:description" content="Scan receipts with cloud AI, link bank and investment accounts via Plaid, and map expenses to Schedule C tax categories.">
+    <meta name="twitter:image" content="https://receiptoptic.com/dashboard_preview.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "ReceiptOptic",
+        "operatingSystem": "Windows, macOS, Android, iOS",
+        "applicationCategory": "FinanceApplication",
+        "description": "Scan receipts with cloud AI, link bank and investment accounts via Plaid, and map expenses to Schedule C tax categories.",
+        "url": "https://receiptoptic.com/"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "ReceiptOptic",
+        "url": "https://receiptoptic.com/",
+        "logo": "https://receiptoptic.com/logo.webp"
+    }
+    </script>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -704,6 +741,9 @@
             gap: 60px;
             align-items: center;
         }
+        .showcase-container.showcase-reverse {
+            grid-template-columns: 0.9fr 1.1fr;
+        }
         .showcase-image-wrapper {
             background: var(--bg-surface);
             border: 1px solid var(--card-border);
@@ -720,6 +760,10 @@
             width: 100%;
             border-radius: 12px;
             display: block;
+        }
+        .showcase-image-wrapper.phone-frame {
+            max-width: 320px;
+            margin: 0 auto;
         }
         .showcase-info h2 {
             font-size: 38px;
@@ -1183,7 +1227,7 @@
     <!-- Navigation Header -->
     <header>
         <div class="nav-logo" id="navLogo">
-            <img src="logo.webp" alt="Logo" class="nav-logo-img" style="height: 32px; width: 32px; border-radius: 8px; object-fit: cover;"> ReceiptOptic
+            <img src="logo.webp" alt="ReceiptOptic logo" class="nav-logo-img" style="height: 32px; width: 32px; border-radius: 8px; object-fit: cover;"> ReceiptOptic
         </div>
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
@@ -1197,7 +1241,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-info">
-            <h1>ReceiptOptic: Premium Financial Intelligence for <span>Desktop & Mobile</span></h1>
+            <h1>ReceiptOptic: Premium Financial Intelligence for <span>Windows, macOS, Android & iOS</span></h1>
             <p>Automate your expenses with secure Cloud AI, track net worth in 3D, and stop subscription price-hikes—all with local-first encryption.</p>
             <div class="hero-ctas">
                 <a href="#download" class="btn-primary" id="btnHeroDownloadPC" style="display: none;">
@@ -1210,7 +1254,7 @@
         </div>
         <div class="hero-mockup-wrapper">
             <div class="hero-mockup-card">
-                <img src="bank_link_preview.png" alt="ReceiptOptic Application Dashboard Mockup" class="hero-mockup-img">
+                <img src="bank_link_preview.png" alt="ReceiptOptic bank account and investment linking mockup" class="hero-mockup-img">
             </div>
         </div>
     </section>
@@ -1221,78 +1265,118 @@
             <h2>Packed with Smart Utilities</h2>
             <p>ReceiptOptic runs locally on your PC and mobile devices, bringing lightning-fast analytics to your personal and business finance ledger.</p>
         </div>
-        <div class="features-grid">
-            <!-- Card 1: 100% Offline Accuracy -->
+
+        <!-- Sub-group: Banking & Investments -->
+        <div class="section-header" style="margin-bottom: 30px;">
+            <h3 style="font-size: 24px; color: #fff;">Banking & Investments</h3>
+        </div>
+        <div class="features-grid" style="margin-bottom: 70px;">
+            <!-- Bank Link & Account Aggregation -->
             <div class="feature-card">
-                <div class="feature-icon">🔒</div>
-                <h3>100% Offline Accuracy</h3>
-                <p>Zero-config instant parsing via local overrides. Vendor signature matching secures 100% accuracy, working completely without a network connection.</p>
+                <div class="feature-icon">🏦</div>
+                <h3>Bank Link & Account Aggregation</h3>
+                <p>Securely connect checking, savings, credit, and investment accounts via Plaid. See linked balances and transactions side-by-side with your scanned receipts in one Bank Link dashboard.</p>
             </div>
-            <!-- Card 2: Schedule C & Tax Savings -->
+            <!-- Investment Holdings & Growth Simulator -->
             <div class="feature-card">
-                <div class="feature-icon">⚖️</div>
-                <h3>IRS Schedule C & Tax Savings</h3>
-                <p>Automatically map itemized business expenses to Schedule C tax lines. Track YTD tax deductions and view estimated self-employment tax savings in real-time.</p>
+                <div class="feature-icon">📊</div>
+                <h3>Investment Holdings & Growth Simulator</h3>
+                <p>View your linked brokerage holdings broken out by asset class, then use the built-in growth simulator to project how monthly contributions could grow your balance over time.</p>
             </div>
-            <!-- Card 3: Secure Cloud-AI Extraction -->
-            <div class="feature-card">
-                <div class="feature-icon">🤖</div>
-                <h3>Secure Cloud-AI Extraction</h3>
-                <p>Snap a photo and let our secure cloud intelligence extract vendors, items, and taxes with 99% accuracy. No user API keys required.</p>
-            </div>
-            <!-- Card 4: Warranty & Return Tracker -->
-            <div class="feature-card">
-                <div class="feature-icon">📅</div>
-                <h3>Warranty & Return Tracker</h3>
-                <p>Keep track of active warranties and return periods. Receive notifications before warranties expire and never miss a return deadline again.</p>
-            </div>
-            <!-- Card 5: Hybrid Privacy Architecture -->
-            <div class="feature-card">
-                <div class="feature-icon">☁️</div>
-                <h3>Hybrid Privacy Architecture</h3>
-                <p>Benefit from the speed of local-first encryption while enjoying seamless, bidirectional cloud sync between your PC and Mobile devices via Supabase.</p>
-            </div>
-            <!-- Card 6: Biometrics & Auto-Lock -->
-            <div class="feature-card">
-                <div class="feature-icon">🔑</div>
-                <h3>Biometrics & Auto-Lock</h3>
-                <p>Unlock the PC app securely using native Windows Hello (PIN, Face, or Fingerprint). Protects your finance ledger with automatic locking on background idle.</p>
-            </div>
-            <!-- Card 7: Fully Adaptive Layouts -->
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Fully Adaptive Layouts</h3>
-                <p>Designed for the modern workspace. Seamlessly transitions between mobile, tablet, and desktop views with an interface that scales to your screen size.</p>
-            </div>
-            <!-- Card 8: AI Cash Flow & Savings Goals -->
+            <!-- AI Cash Flow Forecasting -->
             <div class="feature-card">
                 <div class="feature-icon">📈</div>
-                <h3>AI Cash Flow & Goals</h3>
-                <p>Reconstruct your cash history with automated 30, 60, and 90-day balance projections. Track your savings goals against real-time Plaid account balances.</p>
+                <h3>AI Cash Flow Forecasting</h3>
+                <p>Reconstruct your recent cash flow and get automated 30, 60, and 90-day balance projections based on your linked account activity.</p>
             </div>
-            <!-- Card 9: AI Double-Billing & Fraud Auditor -->
+            <!-- Subscription Price-Hike Detection -->
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <h3>Subscription Price-Hike Detection</h3>
+                <p>Automatically surface recurring subscription charges on your linked accounts and get flagged the moment a service quietly raises its price.</p>
+            </div>
+            <!-- Receipt-to-Bank Reconciliation -->
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Receipt-to-Bank Reconciliation</h3>
+                <p>Automatically match your scanned receipts against linked bank transactions, so your itemized purchases reconcile with what actually hit your account.</p>
+            </div>
+            <!-- Fraud & Double-Billing Scanner -->
             <div class="feature-card">
                 <div class="feature-icon">🔍</div>
                 <h3>Fraud & Double-Billing Scanner</h3>
                 <p>Ensure billing accuracy with a proprietary security engine that automatically flags double charges within 24 hours or sudden transaction spikes.</p>
             </div>
         </div>
-    </section>
 
-    <!-- Ad Placement 1 -->
-    <div class="ad-slot-wrapper">
-        <div class="ad-slot-card">
-            <div class="ad-slot-label">Advertisement</div>
-            <!-- Features-Showcase Break -->
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-2012164450389148"
-                 data-ad-slot="4336330204"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        <!-- Sub-group: Budgeting & Tax Tools -->
+        <div class="section-header" style="margin-bottom: 30px;">
+            <h3 style="font-size: 24px; color: #fff;">Budgeting & Tax Tools</h3>
         </div>
-    </div>
+        <div class="features-grid" style="margin-bottom: 70px;">
+            <!-- Card: Schedule C & Tax Savings -->
+            <div class="feature-card">
+                <div class="feature-icon">⚖️</div>
+                <h3>IRS Schedule C & Tax Savings</h3>
+                <p>Automatically map itemized business expenses to Schedule C tax lines. Track YTD tax deductions and view estimated self-employment tax savings in real-time.</p>
+            </div>
+            <!-- Budgets & Savings Goals -->
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Budgets & Savings Goals</h3>
+                <p>Set category budgets and link savings goals to your accounts, then track progress in real time as your budget and linked balances update.</p>
+            </div>
+            <!-- Auto-Categorization Rules Engine -->
+            <div class="feature-card">
+                <div class="feature-icon">⚙️</div>
+                <h3>Auto-Categorization Rules Engine</h3>
+                <p>Save a categorization rule straight from any receipt review, and future purchases from that vendor are automatically tagged with the right category and business classification.</p>
+            </div>
+        </div>
+
+        <!-- Sub-group: Smart Automation & Insights -->
+        <div class="section-header" style="margin-bottom: 30px;">
+            <h3 style="font-size: 24px; color: #fff;">Smart Automation & Insights</h3>
+        </div>
+        <div class="features-grid">
+            <!-- Card: Cloud AI-Powered Receipt Scanning -->
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>Cloud AI-Powered Receipt Scanning</h3>
+                <p>Snap a photo and secure cloud AI extracts vendors, items, and taxes automatically. Saved vendor rules apply a fast-track categorization for merchants you've scanned before, and receipts scanned while offline are safely queued and processed the moment you're back online.</p>
+            </div>
+            <!-- Category, Store & Trends Analytics -->
+            <div class="feature-card">
+                <div class="feature-icon">📉</div>
+                <h3>Category, Store & Trends Analytics</h3>
+                <p>Drill into your spending by category, by store, or over time with interactive trend views that reveal exactly where your money goes.</p>
+            </div>
+            <!-- Warranty & Return Tracker -->
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <h3>Warranty & Return Tracker</h3>
+                <p>Keep track of active warranties and return periods. Receive notifications before warranties expire and never miss a return deadline again.</p>
+            </div>
+            <!-- Hybrid Privacy Architecture -->
+            <div class="feature-card">
+                <div class="feature-icon">☁️</div>
+                <h3>Hybrid Privacy Architecture</h3>
+                <p>Benefit from the speed of local-first encryption while enjoying seamless, bidirectional cloud sync between your PC and Mobile devices via Supabase.</p>
+            </div>
+            <!-- Biometrics & Lock at Launch -->
+            <div class="feature-card">
+                <div class="feature-icon">🔑</div>
+                <h3>Biometrics & Lock at Launch</h3>
+                <p>Every session starts locked. Unlock securely using native Windows Hello (PIN, Face, or Fingerprint) or your account password before your finance ledger is ever shown.</p>
+            </div>
+            <!-- Fully Adaptive Layouts -->
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Fully Adaptive Layouts</h3>
+                <p>Designed for the modern workspace. Seamlessly transitions between mobile, tablet, and desktop views with an interface that scales to your screen size.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Product Showcase Section -->
     <section class="showcase-section" id="showcase">
@@ -1310,7 +1394,7 @@
                     </div>
                     <div class="showcase-feature">
                         <h4>💼 IRS-Ready Records</h4>
-                        <p>Export database backups and ZIP ledger archives directly to your local storage or flash drives.</p>
+                        <p>Export your receipt history as a CSV spreadsheet, a PDF expense report, an IRS Schedule C PDF, or a ZIP archive of audit-ready receipt images.</p>
                     </div>
                     <div class="showcase-feature">
                         <h4>🏠 Utilities & Housing Tracker</h4>
@@ -1321,20 +1405,56 @@
         </div>
     </section>
 
-    <!-- Ad Placement 2 -->
-    <div class="ad-slot-wrapper">
-        <div class="ad-slot-card">
-            <div class="ad-slot-label">Advertisement</div>
-            <!-- Showcase-Demo Break -->
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-2012164450389148"
-                 data-ad-slot="3486177769"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <!-- Security & Privacy Section -->
+    <section class="showcase-section" id="security">
+        <div class="section-header">
+            <h2>Security & Privacy</h2>
+            <p>Your financial data is protected at every layer, both on your device and in transit.</p>
         </div>
-    </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔐</div>
+                <h3>Encrypted Local Storage</h3>
+                <p>Your receipt databases, scanned images, and budget configurations are stored locally on your device. Local databases are fully encrypted and protected using SQLCipher, secured by your user password.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">☁️</div>
+                <h3>Encrypted Cloud Sync</h3>
+                <p>If you choose to enable optional cloud synchronization, your database is securely synced between your devices via a private Supabase instance using industry-standard SSL/TLS encryption.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗑️</div>
+                <h3>You Control Your Data</h3>
+                <p>All local data resides on your device and is deleted if you uninstall the application. You can also delete your entire account and all associated cloud data instantly from the Settings screen.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analytics Showcase Section -->
+    <section class="showcase-section" id="analytics-showcase">
+        <div class="showcase-container showcase-reverse">
+            <div class="showcase-info">
+                <h2>Spending Insights, Sliced Your Way</h2>
+                <p>Drill into Category, Store, or Trends tabs to see exactly where your money goes, with a side-by-side spending breakdown and every associated receipt linked right below it.</p>
+            </div>
+            <div class="showcase-image-wrapper">
+                <img src="analytics_preview.png" alt="ReceiptOptic Analytics screen showing category spending breakdown and associated receipts" class="showcase-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Mobile App Showcase Section -->
+    <section class="showcase-section" id="mobile-showcase">
+        <div class="showcase-container">
+            <div class="showcase-image-wrapper phone-frame">
+                <img src="mobile_dashboard_preview.png" alt="ReceiptOptic mobile app dashboard on a smartphone, showing the bottom tab bar for Dashboard, Activity, Scan, Insights, and Profile" class="showcase-img">
+            </div>
+            <div class="showcase-info">
+                <h2>A Real Mobile App, Not a Shrunk-Down Website</h2>
+                <p>ReceiptOptic is natively designed for Android and iOS, with a bottom tab bar for one-thumb navigation between Dashboard, Activity, Scan, and Insights. It feels like it belongs on your phone, because it was built for it.</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Interactive Simulator Section -->
     <section class="simulator-section" id="demo">
@@ -1342,7 +1462,7 @@
             <div class="sim-info">
                 <h2>Experience the Local Scanner</h2>
                 <p>ReceiptOptic recognizes standard receipts instantly using signature override indices, bypassing API keys and networks entirely.</p>
-                <p>Select one of the mock receipts below to load it into the simulator, then click <strong>Scan Loaded Receipt</strong> to execute.</p>
+                <p>This interactive demo simulates the scan flow using sample data — select one of the mock receipts below to load it into the simulator, then click <strong>Scan Loaded Receipt</strong> to see how the results screen works. It does not run the live OCR engine.</p>
                 
                 <div class="receipt-selector-title">Select a Receipt:</div>
                 <div class="receipt-chips" id="receiptChips">
@@ -1440,7 +1560,37 @@
             </div>
         </div>
     </section>
-    
+
+    <!-- Ad Placement 1 -->
+    <div class="ad-slot-wrapper">
+        <div class="ad-slot-card">
+            <div class="ad-slot-label">Advertisement</div>
+            <!-- Demo-Download Break -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-2012164450389148"
+                 data-ad-slot="4336330204"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </div>
+
+    <!-- Ad Placement 2 -->
+    <div class="ad-slot-wrapper">
+        <div class="ad-slot-card">
+            <div class="ad-slot-label">Advertisement</div>
+            <!-- Demo-Download Break -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-2012164450389148"
+                 data-ad-slot="3486177769"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </div>
+
     <!-- Download Section (Hidden until ready) -->
     <section class="download-section" id="download" style="display: none;">
         <div class="download-box">

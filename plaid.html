@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>ReceiptOptic | Secure Bank Link</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -176,7 +177,7 @@
 
         // Parse query params
         const urlParams = new URLSearchParams(window.location.search);
-        const userid = urlParams.get('userid') || urlParams.get('userId') || 'tmartin1977';
+        const ticket = urlParams.get('ticket') || '';
 
         // Base URL of your Supabase Edge Functions
         const edgeFunctionUrl = 'https://lwxnuxwoskockzovmevb.supabase.co/functions/v1/plaid-bridge';
@@ -184,6 +185,12 @@
         let handler = null;
 
         async function initializePlaid() {
+            if (!ticket) {
+                statusText.style.color = "#ff3333";
+                statusText.textContent = "Missing or expired link session. Please return to the app and try again.";
+                btnText.textContent = "Initialization Failed";
+                return;
+            }
             try {
                 spinner.style.display = "inline-block";
                 linkButton.disabled = true;
@@ -192,7 +199,7 @@
                 const response = await fetch(edgeFunctionUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'create_link_token', userid: userid })
+                    body: JSON.stringify({ action: 'create_link_token', ticket: ticket })
                 });
 
                 const data = await response.json();
@@ -222,7 +229,7 @@
                                 body: JSON.stringify({
                                     action: 'exchange_token',
                                     public_token: public_token,
-                                    userid: userid
+                                    ticket: ticket
                                 })
                             });
 
