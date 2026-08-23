@@ -1,4 +1,4 @@
-const CACHE_NAME = 'receiptoptic-cache-v3';
+const CACHE_NAME = 'receiptoptic-cache-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -38,10 +38,31 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event (Cache-first with network fallback)
+// Fetch Event
+// Navigation (HTML/document) requests: network-first, so returning visitors
+// always get the latest deploy. Falls back to cache only if the network fails.
+// All other GET requests (images, css, etc.): cache-first with background
+// refresh, for performance.
 self.addEventListener('fetch', (event) => {
   // Only cache GET requests
   if (event.request.method !== 'GET') return;
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+        }
+        return networkResponse;
+      }).catch(() => {
+        return caches.match(event.request).then((cachedResponse) => {
+          return cachedResponse || caches.match('./index.html');
+        });
+      })
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
