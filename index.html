@@ -315,6 +315,7 @@
         .hero-mockup-wrapper {
             position: relative;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
@@ -336,6 +337,16 @@
             width: 100%;
             border-radius: 12px;
             display: block;
+        }
+        .hero-mockup-trust {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
         }
 
         /* Features Section */
@@ -1369,6 +1380,7 @@
             <div class="hero-mockup-card">
                 <img src="bank_link_preview.png" alt="ReceiptOptic bank account and investment linking mockup" class="hero-mockup-img">
             </div>
+            <p class="hero-mockup-trust">🔒 Bank login secured by Plaid — never seen by ReceiptOptic</p>
         </div>
     </section>
 
