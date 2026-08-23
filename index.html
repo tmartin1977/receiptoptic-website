@@ -181,7 +181,7 @@
             backdrop-filter: blur(12px);
             background-color: rgba(7, 9, 19, 0.8);
             position: fixed;
-            top: 38px;
+            top: var(--disclaimer-height, 38px);
             left: 0;
             z-index: 100;
         }
@@ -211,6 +211,16 @@
         }
         .nav-links a:hover {
             color: var(--text-primary);
+        }
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--text-primary);
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
         }
         .nav-btn {
             background: linear-gradient(135deg, #00f2fe 0%, #3b82f6 100%);
@@ -700,11 +710,11 @@
         /* Responsive Design */
         @media (max-width: 900px) {
             .disclaimer-bar {
-                height: 54px;
+                min-height: 54px;
             }
             header {
                 padding: 15px 20px;
-                top: 54px;
+                top: var(--disclaimer-height, 54px);
             }
             .hero {
                 grid-template-columns: 1fr;
@@ -725,6 +735,28 @@
             .simulator-container {
                 grid-template-columns: 1fr;
                 gap: 40px;
+            }
+            .nav-hamburger {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                background: rgba(7, 9, 19, 0.98);
+                padding: 20px 40px;
+                gap: 20px;
+                border-bottom: 1px solid var(--card-border);
+            }
+            .nav-links.open {
+                display: flex;
+            }
+            #btnNavDownload {
+                display: none !important;
             }
         }
 
@@ -1077,7 +1109,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 38px;
+            min-height: 38px;
             box-sizing: border-box;
             background-color: rgba(7, 9, 19, 0.95);
         }
@@ -1220,6 +1252,48 @@
         <span class="disclaimer-text">ReceiptOptic is currently in active development. Features and user interface layouts may evolve as we refine performance and security.</span>
     </div>
 
+    <!-- Disclaimer/Header Offset Sync (runs synchronously, before header/hero paint) -->
+    <script>
+        (function () {
+            var disclaimerBar = document.querySelector('.disclaimer-bar');
+
+            function updateHeaderOffset() {
+                var header = document.querySelector('header');
+                var hero = document.querySelector('.hero');
+                if (!disclaimerBar || !header) return;
+
+                // a. Measure disclaimer-bar's actual rendered height.
+                var disclaimerHeight = disclaimerBar.offsetHeight;
+
+                // b. Set it as a CSS custom property consumed by header's `top`.
+                document.documentElement.style.setProperty('--disclaimer-height', disclaimerHeight + 'px');
+
+                // c. Force reflow so header picks up the new `top` before we measure it.
+                // eslint-disable-next-line no-unused-expressions
+                header.offsetHeight;
+                var headerBottom = header.getBoundingClientRect().bottom;
+
+                // d. Breakpoint-specific buffer (desktop header padding 20px 40px vs
+                // mobile 15px 20px produce different effective header heights, so these
+                // are intentionally not collapsed into one shared constant).
+                var buffer = window.matchMedia('(max-width: 900px)').matches ? 100 : 160;
+
+                // e. Set hero's padding-top from header's actual measured bottom edge.
+                if (hero) {
+                    hero.style.paddingTop = (headerBottom + buffer) + 'px';
+                }
+            }
+
+            updateHeaderOffset();
+
+            if (disclaimerBar && 'ResizeObserver' in window) {
+                new ResizeObserver(updateHeaderOffset).observe(disclaimerBar);
+            }
+
+            window.addEventListener('resize', updateHeaderOffset);
+        })();
+    </script>
+
     <!-- Glow Orbs -->
     <div class="glow-orb orb-1"></div>
     <div class="glow-orb orb-2"></div>
@@ -1229,6 +1303,7 @@
         <div class="nav-logo" id="navLogo">
             <img src="logo.webp" alt="ReceiptOptic logo" class="nav-logo-img" style="height: 32px; width: 32px; border-radius: 8px; object-fit: cover;"> ReceiptOptic
         </div>
+        <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu" aria-expanded="false" onclick="toggleMobileNav()">☰</button>
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#showcase">Dashboard</a></li>
@@ -1237,6 +1312,33 @@
             <li><a href="#download" class="nav-btn" id="btnNavDownload" style="display: none;">Download</a></li>
         </ul>
     </header>
+
+    <!-- Mobile Nav Toggle Logic -->
+    <script>
+        function toggleMobileNav() {
+            const nav = document.querySelector('.nav-links');
+            const btn = document.getElementById('navHamburger');
+            const isOpen = nav.classList.toggle('open');
+            btn.setAttribute('aria-expanded', isOpen);
+            btn.textContent = isOpen ? '✕' : '☰';
+        }
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.nav-links').classList.remove('open');
+                document.getElementById('navHamburger').textContent = '☰';
+                document.getElementById('navHamburger').setAttribute('aria-expanded', 'false');
+            });
+        });
+        document.addEventListener('click', (e) => {
+            const nav = document.querySelector('.nav-links');
+            const btn = document.getElementById('navHamburger');
+            if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== btn) {
+                nav.classList.remove('open');
+                btn.textContent = '☰';
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    </script>
 
     <!-- Hero Section -->
     <section class="hero">
