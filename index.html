@@ -1107,6 +1107,23 @@
             margin: 0;
         }
         /* Disclaimer Bar */
+        .disclaimer-bar-close {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.3s;
+        }
+        .disclaimer-bar-close:hover {
+            color: var(--text-primary);
+        }
         .disclaimer-bar {
             background: rgba(220, 38, 38, 0.15);
             border-bottom: 1px solid rgba(220, 38, 38, 0.3);
@@ -1275,6 +1292,7 @@
     <div class="disclaimer-bar">
         <span class="disclaimer-badge">🛠️ Active Development</span>
         <span class="disclaimer-text">ReceiptOptic is currently in active development. Features and user interface layouts may evolve as we refine performance.</span>
+        <button type="button" class="disclaimer-bar-close" onclick="dismissDisclaimerBar()" aria-label="Dismiss">&times;</button>
     </div>
 
     <!-- Disclaimer/Header Offset Sync (runs synchronously, before header/hero paint) -->
@@ -1287,7 +1305,7 @@
                 var hero = document.querySelector('.hero');
                 if (!disclaimerBar || !header) return;
 
-                // a. Measure disclaimer-bar's actual rendered height.
+                // a. Measure disclaimer-bar's actual rendered height (0 when hidden).
                 var disclaimerHeight = disclaimerBar.offsetHeight;
 
                 // b. Set it as a CSS custom property consumed by header's `top`.
@@ -1309,13 +1327,69 @@
                 }
             }
 
+            // Single shared hide routine: plain display:none (no transition, so it
+            // never fights the synchronous header/hero offset math above), followed
+            // by an explicit re-run of updateHeaderOffset() rather than relying only
+            // on the ResizeObserver callback.
+            function hideBar() {
+                if (!disclaimerBar) return;
+                disclaimerBar.style.display = 'none';
+                updateHeaderOffset();
+            }
+
+            window.dismissDisclaimerBar = function () {
+                hideBar();
+                localStorage.setItem('disclaimerDismissed', '1');
+            };
+
+            // If previously dismissed, hide before the first updateHeaderOffset()
+            // call so there's no flash-then-snap on repeat visits.
+            var alreadyDismissed = false;
+            if (disclaimerBar && localStorage.getItem('disclaimerDismissed')) {
+                disclaimerBar.style.display = 'none';
+                alreadyDismissed = true;
+            }
+
             updateHeaderOffset();
+
+            // The call above runs before <header> exists in the DOM (this script
+            // sits earlier in document order), so it no-ops on first paint. For a
+            // visible bar, ResizeObserver's initial observation callback corrects
+            // this once layout settles. But ResizeObserver never fires for a
+            // display:none box (per spec, unrendered boxes deliver no
+            // notifications), so when the bar starts hidden (already dismissed)
+            // nothing would otherwise re-run the sync. Re-run once DOM parsing
+            // completes to cover that case too.
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateHeaderOffset, { once: true });
+            } else {
+                updateHeaderOffset();
+            }
 
             if (disclaimerBar && 'ResizeObserver' in window) {
                 new ResizeObserver(updateHeaderOffset).observe(disclaimerBar);
             }
 
             window.addEventListener('resize', updateHeaderOffset);
+
+            // Scroll auto-hide: one-shot, rAF-throttled, session-only (not persisted).
+            if (disclaimerBar && !alreadyDismissed) {
+                var scrollRafPending = false;
+
+                function onScroll() {
+                    if (scrollRafPending) return;
+                    scrollRafPending = true;
+                    requestAnimationFrame(function () {
+                        scrollRafPending = false;
+                        if (window.scrollY > 80) {
+                            hideBar();
+                            window.removeEventListener('scroll', onScroll);
+                        }
+                    });
+                }
+
+                window.addEventListener('scroll', onScroll, { passive: true });
+            }
         })();
     </script>
 
