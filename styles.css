@@ -769,6 +769,20 @@
             }
         }
 
+        /* Narrow-phone hero type scale: keeps the primary CTA and the Plaid
+           trust line within roughly one viewport height on small phones. */
+        @media (max-width: 480px) {
+            .hero-info h1 {
+                font-size: 28px;
+                line-height: 1.2;
+                margin-bottom: 14px;
+            }
+            .hero-info p {
+                font-size: 15px;
+                margin-bottom: 22px;
+            }
+        }
+
         /* Showcase Section */
         .showcase-section {
             padding: 100px 40px;
@@ -799,12 +813,18 @@
         }
         .showcase-img {
             width: 100%;
+            height: auto;
+            aspect-ratio: 1400 / 900;
             border-radius: 12px;
             display: block;
         }
         .showcase-image-wrapper.phone-frame {
+            width: 100%;
             max-width: 320px;
             margin: 0 auto;
+        }
+        .showcase-image-wrapper.phone-frame .showcase-img {
+            aspect-ratio: 375 / 812;
         }
         .showcase-info h2 {
             font-size: 38px;
@@ -823,7 +843,7 @@
             flex-direction: column;
             gap: 20px;
         }
-        .showcase-feature h4 {
+        .showcase-feature h3 {
             font-size: 16px;
             margin-bottom: 5px;
             font-family: 'Outfit', sans-serif;
