@@ -1,10 +1,14 @@
 {
   "applinks": {
-    "apps": [],
     "details": [
       {
-        "appID": "ZSM4473Q93.com.example.receiptvisionmobile.iosApp",
-        "paths": ["/plaid.html"]
+        "appIDs": [ "ZSM4473Q93.com.receiptoptic.app.ios" ],
+        "components": [
+          {
+            "/": "/plaid.html",
+            "comment": "Plaid OAuth bank-link resume redirect (plaid-bridge/index.ts:187). Query string (?ticket=...) is optional per Apple's AASA matching rules when '?' is omitted, so this matches with or without the ticket param."
+          }
+        ]
       }
     ]
   }
