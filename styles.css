@@ -135,6 +135,10 @@
             top: var(--disclaimer-height, 38px);
             left: 0;
             z-index: 100;
+            /* Own stacking context so the mobile nav dropdown (a child positioned
+               outside this box via top:100%) doesn't inherit backdrop-filter
+               compositing from this element and render as partially see-through. */
+            isolation: isolate;
         }
         .nav-logo {
             font-size: 24px;
@@ -756,10 +760,11 @@
                 width: 100%;
                 flex-direction: column;
                 align-items: flex-start;
-                background: rgba(7, 9, 19, 0.98);
+                background: rgb(7, 9, 19);
                 padding: 20px 40px;
                 gap: 20px;
                 border-bottom: 1px solid var(--card-border);
+                isolation: isolate;
             }
             .nav-links.open {
                 display: flex;
