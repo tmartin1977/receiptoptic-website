@@ -790,6 +790,18 @@
             margin: 0 auto;
             position: relative;
         }
+
+        /* M-5 fix: .showcase-section keeps the full 100px desktop vertical
+           padding at 375px width, producing long near-empty scroll
+           stretches between sections on small phones. Scale it down (must
+           come after the base .showcase-section rule above — equal
+           specificity, so source order decides and an earlier media-query
+           copy would otherwise lose the cascade). */
+        @media (max-width: 480px) {
+            .showcase-section {
+                padding: 48px 20px;
+            }
+        }
         .showcase-container {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
@@ -1142,8 +1154,11 @@
             color: var(--text-primary);
         }
         .disclaimer-bar {
-            background: rgba(220, 38, 38, 0.15);
-            border-bottom: 1px solid rgba(220, 38, 38, 0.3);
+            /* M-4: was alarm-red (rgba(220,38,38,...)) — recolored to the
+               site's own cyan/blue accent so this reads as a routine status
+               note, not a warning, right before the hero's "Premium" claim. */
+            background: rgba(0, 242, 254, 0.08);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.25);
             color: var(--text-primary);
             padding: 8px 16px;
             font-size: 13px;
@@ -1163,9 +1178,9 @@
             background-color: rgba(7, 9, 19, 0.95);
         }
         .disclaimer-badge {
-            background: rgba(220, 38, 38, 0.2);
-            color: #ef4444;
-            border: 1px solid rgba(220, 38, 38, 0.4);
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(0, 242, 254, 0.4);
             font-size: 11px;
             font-weight: 700;
             padding: 2px 8px;
