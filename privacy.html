@@ -86,21 +86,32 @@
             <li><strong>Optional Cloud Sync:</strong> If you choose to enable cloud synchronization, your database is securely synced between your devices via a private Supabase instance using industry-standard SSL/TLS encryption.</li>
         </ul>
 
-        <h2>2. Third-Party AI Processing</h2>
-        <p>To automate receipt data extraction, ReceiptOptic utilizes secure Cloud AI services:</p>
+        <h2>2. Bank & Investment Account Linking (Plaid)</h2>
+        <p>ReceiptOptic offers optional bank and investment account linking, powered by Plaid Inc. ("Plaid"), a third-party financial data service. This feature is entirely optional — you can use ReceiptOptic's receipt scanning, budgeting, and tax-tracking features without ever linking a financial account.</p>
         <ul>
-            <li>Scanned receipt images are sent to Google Gemini APIs via secure, encrypted cloud functions to extract vendor names, transaction dates, tax rates, and line items.</li>
-            <li>This data processing is transient; your receipt images and metadata are not stored permanently by the third-party AI provider.</li>
+            <li><strong>Your credentials never reach us.</strong> When you choose to link an account, your bank or brokerage login is entered directly into Plaid's own secure interface. ReceiptOptic's app and servers never see or store your bank username or password.</li>
+            <li><strong>What we actually receive.</strong> After you complete linking, Plaid provides ReceiptOptic with a secure access token — not your credentials — which is used to retrieve your account balances and transaction history on your behalf.</li>
+            <li><strong>How that data is stored.</strong> Balances and transactions retrieved through Plaid are stored the same way as your other financial data described in Section 1: locally on your device, and — only if you've enabled cloud sync — in your private, encrypted Supabase instance.</li>
+            <li><strong>Disconnecting an account.</strong> You can unlink a connected bank or investment account at any time from the Bank Link screen inside the app.</li>
+            <li><strong>Plaid's own role.</strong> Once your data is retrieved through Plaid, Plaid's handling of it is governed by Plaid's own privacy policy, available at <a href="https://plaid.com/legal/" target="_blank" rel="noopener noreferrer">plaid.com/legal</a>. ReceiptOptic does not sell, rent, or share the bank or investment account data obtained through Plaid with any other third party for marketing or advertising purposes.</li>
         </ul>
 
-        <h2>3. Data Retention and Deletion</h2>
+        <h2>3. Third-Party AI Processing</h2>
+        <p>To automate receipt data extraction, ReceiptOptic sends your scanned receipt images directly from your device to Google's Gemini API over an encrypted (HTTPS) connection, to extract vendor names, transaction dates, tax amounts, and line items. This is a direct connection between your device and Google — it does not pass through any ReceiptOptic-operated server.</p>
+        <ul>
+            <li><strong>Paid/billed Gemini API access:</strong> under a paid Gemini API tier, Google's terms state that submitted content and responses are not used to improve Google's products, and are not used for model training.</li>
+            <li><strong>Free-tier Gemini API access:</strong> under Google's free API tier (Google AI Studio, no billing account), Google's terms allow submitted content — including images — to be used to provide, improve, and develop Google's products, and human reviewers may see it. This free-tier data-use policy does not apply to users located in the EEA, UK, or Switzerland, where paid-tier data protections apply regardless of billing status.</li>
+            <li>Which of these applies depends on which Gemini API access the operator has configured; it is not something ReceiptOptic's own app can change on your behalf.</li>
+        </ul>
+
+        <h2>4. Data Retention and Deletion</h2>
         <p>You retain complete ownership and control over your financial data:</p>
         <ul>
             <li>All local data resides on your device and is deleted if you uninstall the application.</li>
             <li><strong>Instant Account & Cloud Deletion:</strong> Users can delete their entire account and all associated cloud data instantly via the "Delete Account" feature inside the Settings screen of the app. Once deleted, this action is irreversible.</li>
         </ul>
 
-        <h2>4. Cookies and Site Analytics</h2>
+        <h2>5. Cookies and Site Analytics</h2>
         <p>Our website utilizes minor cookies to preserve user preferences. We do not resell user financial records to any data brokers.</p>
         <p>Our website displays advertisements served through Google AdSense. Google AdSense uses cookies and similar tracking technologies to serve ads, including ads personalized based on your interests and browsing activity across websites. These third-party cookies are subject to Google's own privacy and data-use policies.</p>
         <p>You can control ad personalization in several ways:</p>
@@ -110,7 +121,7 @@
             <li><strong>Industry Opt-Out:</strong> You can also opt out of personalized advertising from participating companies via the Digital Advertising Alliance's tool at <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer">aboutads.info/choices</a>.</li>
         </ul>
 
-        <h2>5. Consent</h2>
+        <h2>6. Consent</h2>
         <p>By using our website or mobile/desktop applications, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.</p>
     </div>
 </body>
